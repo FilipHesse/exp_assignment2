@@ -115,7 +115,7 @@ find_package (OpenCV REQUIRED)
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES bridge_example
-#  CATKIN_DEPENDS cv_bridge image_transport roscpp sensor_msgs
+  CATKIN_DEPENDS cv_bridge image_transport roscpp sensor_msgs actionlib_msgs nav_msgs std_msgs geometry_msgs tf message_runtime
   DEPENDS OpenCV
 )
 
