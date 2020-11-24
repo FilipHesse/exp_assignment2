@@ -63,5 +63,7 @@
     <node name="position_server" pkg="exp_assignment2" type="go_to_point_ball.py" output="screen" />
   </group>
 
+    <node name="rqt_image_view" pkg="rqt_image_view" type="rqt_image_view"/>
+
 
 </launch>
