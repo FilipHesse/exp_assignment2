@@ -187,6 +187,18 @@
     <joint_properties damping="1.0" friction="1.0"/>
   </joint>
 
+  <transmission name="camera_joint_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="camera_joint">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor1">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalInterface>1</mechanicalInterface>
+    </actuator>
+  </transmission>
+
+
 
 
 </robot>
