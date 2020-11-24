@@ -33,17 +33,6 @@
   <arg unless="$(arg debug)" name="script_type" value="gzserver"/>
   <arg if="$(arg debug)" name="script_type" value="debug"/>
 
-  <!-- start gazebo server-->
-  <group if="$(arg use_clock_frequency)">
-    <param name="gazebo/pub_clock_frequency" value="$(arg pub_clock_frequency)" />
-  </group>
-  <node name="gazebo" pkg="gazebo_ros" type="$(arg script_type)" respawn="$(arg respawn_gazebo)" output="screen" args="$(arg command_arg1) $(arg command_arg2) $(arg command_arg3) -e $(arg physics) $(arg extra_gazebo_args) $(arg world_name)" />
-
-  <!-- start gazebo client -->
-  <group if="$(arg gui)">
-    <node name="gazebo_gui" pkg="gazebo_ros" type="gzclient" respawn="false" output="screen"/>
-  </group>
-
   <arg name="ns1" value="robot"/>
   <param name="$(arg ns1)/robot_description" command="$(find xacro)/xacro --inorder $(find exp_assignment2)/urdf/robot.xacro" />
 
@@ -51,17 +40,20 @@
   <param name="$(arg ns2)/ball_description" command="$(find xacro)/xacro --inorder $(find exp_assignment2)/urdf/ball.xacro" />
 
   <param name="human_description1" textfile="$(find exp_assignment2)/urdf/human.urdf" />
-
-  <node name="urdf_spawner_human1" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model human1 -param human_description1 -x -7 -y 7 -z 0.34 -R 0 -P 0 -Y 0"/>
+ 
+ <!-- start gazebo server-->
+  <group if="$(arg use_clock_frequency)">
+    <param name="gazebo/pub_clock_frequency" value="$(arg pub_clock_frequency)" />
+  </group>
+  <node name="gazebo" pkg="gazebo_ros" type="$(arg script_type)" respawn="$(arg respawn_gazebo)" output="screen" args="$(arg command_arg1) $(arg command_arg2) $(arg command_arg3) -e $(arg physics) $(arg extra_gazebo_args) $(arg world_name)" />
 
   <group ns="$(arg ns1)">
     <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model $(arg ns1) -param robot_description -x -5 -y 7 -Y 3.14 -z 0.05"/>
+    <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui"></node>
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"></node>
   </group>
 
-  <group ns="$(arg ns2)">
-    <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model $(arg ns2) -param ball_description -x -7 -y 6 -z 0.25"/>
-    <node name="position_server" pkg="exp_assignment2" type="go_to_point_ball.py" output="screen" />
-  </group>
+<node name="rviz" pkg="rviz" type="rviz" args="-d $(find exp_assignment2)/rviz/rviz_cfg.rviz"></node>
 
 
 </launch>

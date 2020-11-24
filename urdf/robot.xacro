@@ -178,11 +178,13 @@
     </inertial>
   </link>
 
-  <joint name="camera_joint" type="fixed">
-    <axis xyz="0 1 0" />
+  <joint name="camera_joint" type="revolute">
+    <axis xyz="0 0 1" />
     <origin xyz="0 0 0.1" rpy="0 0 0"/>
     <parent link="neck_link"/>
     <child link="camera_link"/>
+    <limit effort="10000" velocity="1000" lower="${-pi/4}" upper="${pi/4}"/>
+    <joint_properties damping="1.0" friction="1.0"/>
   </joint>
 
 
