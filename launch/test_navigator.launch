@@ -55,7 +55,6 @@
     <rosparam file="$(find exp_assignment2)/config/motors_config.yaml" command="load" />
     <node name="controller_spawner" pkg="controller_manager" type="spawner" output="screen" args="--namespace=/robot
   joint_state_controller camera_position_controller"/>
-    <node name="navigator" pkg="exp_assignment2" type="navigator.py" output="screen" />
     <rosparam command="load" file="$(find exp_assignment2)/config/navigator_params.yaml" />
   </group>
 

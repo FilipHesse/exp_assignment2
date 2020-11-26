@@ -1,2 +1,4 @@
-p_linear: 0
-p_angular: 1
+p_linear: 1
+thr_linear: 1.5
+p_angular: 3
+thr_angular: 1

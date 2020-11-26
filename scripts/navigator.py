@@ -7,7 +7,7 @@ import geometry_msgs.msg
 from nav_msgs.msg import Odometry
 import exp_assignment2.msg
 
-from math import pow, atan2, sqrt
+from math import pow, atan2, sqrt, pi
 from tf import transformations
 import actionlib
 
@@ -65,17 +65,39 @@ class RobotNavigator:
 
     def linear_vel(self, goal_pose):
         """See video: https://www.youtube.com/watch?v=Qh15Nol5htM."""
-        constant = rospy.get_param("p_linear")
-        return constant * self.euclidean_distance(goal_pose)
+        p = rospy.get_param("p_linear")
+        thr = rospy.get_param("thr_linear")
+        vel = p * self.euclidean_distance(goal_pose)
+        if vel > thr:
+            vel = thr
+        if vel < -thr:
+            vel = -thr
+        return vel
 
     def steering_angle(self, goal_pose):
         """See video: https://www.youtube.com/watch?v=Qh15Nol5htM."""
         return atan2(goal_pose.y - self.pose.y, goal_pose.x - self.pose.x)
+        
+
+    def angle_diff(self,goal_pose):
+        angle = self.steering_angle(goal_pose) - self.pose.theta
+        if angle > pi:
+            angle = angle - 2*pi
+        if angle < -pi:
+            angle = angle + 2*pi
+        return angle
 
     def angular_vel(self, goal_pose):
         """See video: https://www.youtube.com/watch?v=Qh15Nol5htM."""
-        constant = rospy.get_param("p_angular")
-        return constant * (self.steering_angle(goal_pose) - self.pose.theta)
+        p = rospy.get_param("p_angular")
+        thr = rospy.get_param("thr_angular")
+        rospy.loginfo("steering angle: {} robots angle: {}".format(self.steering_angle(goal_pose), self.pose.theta))
+        vel = -p * self.angle_diff(goal_pose)  #MINUS, because we want to ratate in the inverse direction of the error angle (to make it zero!)
+        if vel > thr:
+            vel = thr
+        if vel < -thr:
+            vel = -thr
+        return vel
 
     def move2goal(self, goal):
         """Moves the turtle to the goal."""
@@ -88,6 +110,7 @@ class RobotNavigator:
         distance_tolerance = 0.1
 
         vel_msg = Twist()
+        aligning_done = False
 
         while self.euclidean_distance(goal_pose) >= distance_tolerance:
             #Send feedback of action server
@@ -100,14 +123,21 @@ class RobotNavigator:
             # https://en.wikipedia.org/wiki/Proportional_control
 
             # Linear velocity in the x-axis.
-            vel_msg.linear.x = self.linear_vel(goal_pose)
-            vel_msg.linear.y = 0
-            vel_msg.linear.z = 0
-
-            # Angular velocity in the z-axis.
-            vel_msg.angular.x = 0
-            vel_msg.angular.y = 0
-            vel_msg.angular.z = self.angular_vel(goal_pose)
+            if not aligning_done and abs(self.angle_diff(goal_pose)) > pi/20:
+                vel_msg.linear.x = 0
+                vel_msg.linear.y = 0
+                vel_msg.linear.z = 0
+                vel_msg.angular.x = 0
+                vel_msg.angular.y = 0
+                vel_msg.angular.z = self.angular_vel(goal_pose)
+            else:
+                aligning_done = True
+                vel_msg.linear.x = self.linear_vel(goal_pose)
+                vel_msg.linear.y = 0
+                vel_msg.linear.z = 0
+                vel_msg.angular.x = 0
+                vel_msg.angular.y = 0
+                vel_msg.angular.z = self.angular_vel(goal_pose)
 
             # Publishing our vel_msg
             self.velocity_publisher.publish(vel_msg)
