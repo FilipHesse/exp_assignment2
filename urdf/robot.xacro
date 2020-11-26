@@ -13,6 +13,13 @@
     </inertial>
   </xacro:macro>
 
+  <xacro:macro name="cuboid_inertial" params="mass length width height">
+    <inertial>
+      <mass value="${mass}"/>
+      <inertia ixx="${0.83*mass*(width+height)}" ixy="0.0" ixz="0.0" iyy="${0.83*mass*(length+height)}" iyz="0.0" izz="${0.83*mass*(width+length)}" />
+    </inertial>
+  </xacro:macro>
+
   <xacro:macro name="wheel_geometry">
     <geometry>
       <cylinder length="${length_wheel}" radius="${radius_wheel}"/>
@@ -171,11 +178,7 @@
         <color rgba="1 0 0 1"/>
       </material>
     </visual>
-    <inertial>
-      <mass value="1" />
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
-    </inertial>
+    <xacro:cuboid_inertial mass="0.3" length="0.25" width="0.1" height="0.05"/>
   </link>
 
   <joint name="camera_joint" type="revolute">
