@@ -9,6 +9,9 @@ from cv_bridge import CvBridge, CvBridgeError
 from sensor_msgs.msg import Image
 
 from std_msgs.msg import Bool
+from std_msgs.msg import Int64
+from exp_assignment2.msg import BallCenterRadius
+
 
 
 class NumberCounter:
@@ -16,6 +19,7 @@ class NumberCounter:
         self.counter = 0
         self.pub_img = rospy.Publisher("camera1/image_processed", Image, queue_size=1)
         self.pub_vis = rospy.Publisher("camera1/ball_visible", Bool, queue_size=1)
+        self.pub_cr = rospy.Publisher("camera1/ball_center_radius", BallCenterRadius, queue_size=1)
         self.number_subscriber = rospy.Subscriber("camera1/image_raw", Image, self.callback_raw_image)
 
         self.bridge = CvBridge()
@@ -35,7 +39,8 @@ class NumberCounter:
         cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
                                 cv2.CHAIN_APPROX_SIMPLE)
         cnts = imutils.grab_contours(cnts)
-        center = None
+        center = [0, 0]
+        radius = 0
         visible = False
 
                 # only proceed if at least one contour was found
@@ -59,6 +64,13 @@ class NumberCounter:
 
         self.pub_img.publish((self.bridge.cv2_to_imgmsg(self.image, 'bgr8')))
         self.pub_vis.publish(visible)
+
+        cr = BallCenterRadius()
+        cr.visible = Bool(visible)
+        cr.center_x = Int64(center[0])
+        cr.center_y = Int64(center[1])
+        cr.radius = Int64(int(radius))
+        self.pub_cr.publish(cr)
 
 
 if __name__ == '__main__':
