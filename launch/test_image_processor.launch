@@ -54,7 +54,6 @@
 
   <node name="urdf_spawner_human1" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model human1 -param human_description1 -x -7 -y 7 -z 0.34 -R 0 -P 0 -Y 0"/>
 
-  <node name="ui" pkg="exp_assignment2" type="ui.py" output="screen" />
 
   <group ns="$(arg ns1)">
     <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model $(arg ns1) -param robot_description -x -5 -y 7 -Y 3.14 -z 0.05"/>
@@ -64,8 +63,6 @@
     <node name="navigator" pkg="exp_assignment2" type="navigator.py" output="screen" />
     <rosparam command="load" file="$(find exp_assignment2)/config/navigator_params.yaml" />
   </group>
-
-
 
 
   <group ns="$(arg ns2)">
