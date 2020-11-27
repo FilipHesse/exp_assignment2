@@ -6,14 +6,18 @@ import actionlib
 
 from exp_assignment2.msg import LookLeftRightAction
 from std_msgs.msg import Float64
+from math import pi
 
 
 class CameraController:
     def __init__(self):
         self.server = actionlib.SimpleActionServer(
-            'do_dishes', LookLeftRightAction, self.execute, False)
+            'look_left_right', LookLeftRightAction, self.execute, False)
         self.server.start()
-        self.pub = rospy.Publisher("camera_position_controller/command", Float64, queue_size=10)
+        self.pub = rospy.Publisher(
+            "camera_position_controller/command", Float64, queue_size=10)
+
+        self.action_active = False
 
         self.publish_continuously_zero()
 
@@ -21,12 +25,19 @@ class CameraController:
         r = rospy.Rate(10)  # 10hz
 
         while not rospy.is_shutdown():
-            self.pub.publish(Float64(0))
-            r.sleep()
+            if not self.action_active:
+                self.pub.publish(Float64(0))
+                r.sleep()
 
     def execute(self, goal):
-        # Do lots of awesome groundbreaking robot stuff here
+        self.action_active = True
+        self.pub.publish(Float64(pi/4))
+        rospy.sleep(2)
+        self.pub.publish(Float64(-pi/4))
+        rospy.sleep(2)
+        self.pub.publish(Float64(0))
         self.server.set_succeeded()
+        self.action_active = False
 
 
 if __name__ == '__main__':
