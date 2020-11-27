@@ -4,7 +4,7 @@ import roslib
 import rospy
 import actionlib
 
-from exp_assignment2.msg import LookLeftRightAction
+from exp_assignment2.msg import EmptyAction
 from std_msgs.msg import Float64
 from math import pi
 
@@ -12,12 +12,12 @@ from math import pi
 class CameraController:
     def __init__(self):
         self.server = actionlib.SimpleActionServer(
-            'look_left_right', LookLeftRightAction, self.execute, False)
+            'look_left_right', EmptyAction, self.execute, False)
         self.server.start()
         self.pub = rospy.Publisher(
             "camera_position_controller/command", Float64, queue_size=10)
 
-        self.action_active = False
+        self.action_active = False  
 
         self.publish_continuously_zero()
 

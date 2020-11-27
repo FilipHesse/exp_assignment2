@@ -72,7 +72,7 @@ add_message_files(
  add_action_files(
    FILES
    Planning.action
-   LookLeftRight.action
+   Empty.action
  )
 
 ## Generate added messages and services with any dependencies listed here
