@@ -9,13 +9,6 @@ Each interface with the ROS infrastructure, such as service clients,
 servers, action clients and publishers are implemented within separate
 classes. All these interfaces are then passed to the smach-states while they
 are constructed, in order to make the interfaces accessible for the states.
-
-    Requirements:
-        The following parameters need to be set in the ros parameter server:
-            /map_width
-            /map_height
-        You can use the launchfile params.launch to set these to some 
-        default values
 """
 
 from __future__ import print_function
@@ -34,12 +27,10 @@ from exp_assignment2.msg import EmptyAction, EmptyGoal
 class SetTargetActionClient():
     """Action client to set target position
 
-    An action client has been chosen, because it is a non blocking call. This
-    way, incoming commands can still be handeled properly and actions like
-    "sleep" will be processed right after the service call has finished.
+    An action client has been chosen, because action clients are non blocking
 
     To use this class, only use the functions call_action() to set a new target
-    and check the value #TODO ready_for_new_target to check if previous action was 
+    and check the function is_active() to check if previous action was 
     finished
 
     Attributes: 
@@ -89,18 +80,23 @@ class SetTargetActionClient():
         rospy.loginfo("SetTargetAction is done!")
 
     def cancel_goal(self):
+        """Cancel current goal of action server
+        """
         self.client.cancel_goal()
 
     def is_active(self):
+        """Is action server currently processing a goal?
+
+        Returns:
+            bool: is action server currently processing a goal
+        """
         return self.client.get_state() == GoalStatus.ACTIVE
 
 
 class FollowBallActionClient():
-    """Action client to set target position
+    """Action client to make the robot follow the ball
 
-    An action client has been chosen, because it is a non blocking call. This
-    way, incoming commands can still be handeled properly and actions like
-    "sleep" will be processed right after the service call has finished.
+    An action client has been chosen, because it is a non blocking call.
 
     Attributes: 
         client (actionlib.SimpleActionClient): Clientobject to interface with 
@@ -117,11 +113,7 @@ class FollowBallActionClient():
         self.client.wait_for_server()
 
     def call_action(self):
-        """Use this function to set a new target position of the robot_pet  
-
-        Args:
-            x (int): target x-position of the robot
-            y (int): target y-position of the robot
+        """Use this function to make the robot follow the ball  
         """
 
         rospy.loginfo(
@@ -136,8 +128,6 @@ class FollowBallActionClient():
         self.client.send_goal(goal,
                               done_cb=self.callback_done)
 
-
-
     def callback_done(self, state, result):
         """This callback gets called when action server is done
 
@@ -151,9 +141,16 @@ class FollowBallActionClient():
             "FollowBallAction is done. Action state: {}".format(state))
 
     def cancel_goal(self):
+        """Cancel current goal of action server
+        """
         self.client.cancel_goal()
 
     def is_active(self):
+        """Is action server currently processing a goal?
+
+        Returns:
+            bool: is action server currently processing a goal
+        """
         return self.client.get_state() == GoalStatus.ACTIVE
 
 
@@ -206,15 +203,30 @@ class SleepingTimer():
 
 
 class BallVisibleSubscriber:
+    """Subscriber, that subscribes to the topic camera1/ball_visible
+    """
+
     def __init__(self):
+        """Creates the subscriber
+        """
         self.ball_visible = False
         self.sub = rospy.Subscriber(
             "camera1/ball_visible", Bool, self.callback)
 
     def callback(self, msg):
+        """Publisher callback
+
+        Args:
+            msg (Bool): is ball visible
+        """
         self.ball_visible = msg.data
 
     def is_ball_visible(self):
+        """Use this function to check if ball was visible in the last message
+
+        Returns:
+            bool: Is ball visible?
+        """
         return self.ball_visible
 
 
@@ -228,16 +240,18 @@ class Normal(smach.State):
 
     Attributes:
         set_target_action_client (SetTargetActionClient): Action client to set a new target position
+        ball_visible_subscriber (BallVisibleSubscriber): Subscriber, subscribes to topic ball_visible
         sleeping_timer (SleepingTimer): Allows checking if it is time to sleep
-        map_width (int): Width of map to choose appropriate target positions
-        map_height (int): Height of map to choose appropriate target positions
+        map_range_x ([int,int]): Range of map in x
+        map_range_y ([int,int]): Range of map in y
     """
 
     def __init__(self, set_target_action_client, ball_visible_subscriber, sleeping_timer):
-        """Initializes attributes and reads ros parameters (width, height)
+        """Initializes attributes
 
         Args:
             set_target_action_client (SetTargetActionClient): See class description
+            ball_visible_subscriber (BallVisibleSubscriber): See class description
             sleeping_timer (SleepingTimer): See class description
         """
 
@@ -251,7 +265,7 @@ class Normal(smach.State):
         self.map_range_y = [-8, 8]
 
         self.target_sent = False
-                
+
         hz = 10
         self.rate = rospy.Rate(hz)
         sleep_seconds = 3
@@ -260,9 +274,9 @@ class Normal(smach.State):
     def execute(self, userdata):
         """ Robot moves around between random positions
 
-        Endless loop checks if it's time to sleep or if a user command has been
-        sent to exit this state. Then it sends new position targets in case the
-        robot is not already moving
+        Endless loop checks if it's time to sleep or if ball is seen. Then it
+        sends new position targets and waits for 3 seconds after the target
+        position has been reached.
 
         Args: userdata (----): unused
 
@@ -279,6 +293,7 @@ class Normal(smach.State):
                 self.cancel_goal_and_wait_till_done(self.rate)
                 return 'sleeping_time'
 
+            # Check if ball is seen
             if self.ball_visible_subscriber.is_ball_visible():
                 rospy.loginfo('Ball seen! Canceling go_to_target')
                 self.cancel_goal_and_wait_till_done(self.rate)
@@ -296,7 +311,7 @@ class Normal(smach.State):
                     self.target_sent = True
                     sleep_iteration_counter = 0
 
-                #Wait
+                # Wait
                 if self.target_sent:
                     # Is waiting time over? -> reset target_sent, so that new target can be sent
                     if sleep_iteration_counter >= self.iterations_to_sleep:
@@ -308,6 +323,11 @@ class Normal(smach.State):
             self.rate.sleep()
 
     def cancel_goal_and_wait_till_done(self, rate):
+        """Cancels goal and waits till server has really stopped
+
+        Args:
+            rate (rospy.Rate): rate for polling sleep
+        """
         if self.set_target_action_client.is_active():
             self.set_target_action_client.cancel_goal()
             # Wait unitl client indeed is not active anymore (robot should have stopped)
@@ -371,19 +391,17 @@ class Sleep(smach.State):
 class Play(smach.State):
     """Defines the Smach-state PLAY
 
-    In this state the robot performs the following actions in a loop:
-    1) Go to user
-    2) Wait for a command that specifies a new target
-    3) Go to new target
-    Repeat
+    Robot follows ball. If it stops seeing the ball for 3 seconds, it switches
+    to NORMAL state
 
     The game is repeated for a randum number of times between 1 and 3
 
-    Attributes:
-        set_target_action_client (SetTargetActionClient): Action client to set a new target position
-        sleeping_timer (SleepingTimer): Allows checking if it is time to sleep
-        pub (rospy.Publisher()): A publisher to publish the pointer positions. This publisher is
-            defined inside this state because it is not needed in any other state
+    Attributes: 
+        follow_ball_action_client(SetTargetActionClient): Action client to set 
+            the command to follow the ball
+        ball_visible_subscriber(BallVisibleSubscriber): Subscriber, subscribes 
+            to the topic ball_visible
+        sleeping_timer (SleepingTimer): Allows checking if it is time to sleep 
     """
 
     def __init__(self, follow_ball_action_client, ball_visible_subscriber, sleeping_timer):
@@ -393,7 +411,8 @@ class Play(smach.State):
             set_target_action_client (SetTargetActionClient): See class description
             sleeping_timer (SleepingTimer): See class description
         """
-        smach.State.__init__(self, outcomes=['can_not_see_ball_3_s', 'sleeping_time'])
+        smach.State.__init__(
+            self, outcomes=['can_not_see_ball_3_s', 'sleeping_time'])
         self.follow_ball_action_client = follow_ball_action_client
         self.ball_visible_subscriber = ball_visible_subscriber
         self.sleeping_timer = sleeping_timer
@@ -406,23 +425,15 @@ class Play(smach.State):
     def execute(self, userdata):
         """Executes play mode
 
-        In this state the robot performs the following actions in a loop:
-        1) Go to user
-        2) Wait for a command that specifies a new target
-        3) Go to new target 
-        4) Go back to person
-
-        This function implements these steps and braks them down into smaller
-        substeps Details can be viewed inside the code, which is commented. It
-        is only checked at the end of each game (after going back to the
-        person), if it is time to go to sleep or if the number of games to be
-        played (random between 1 and 3) has been reached.
+        Calls Action to follow the ball, then in a loop checks if it is time 
+        to sleep or if ball was not seen for longer than 3 seconds.
+        If one of the cases occurs, the action is canceled and the state is left 
 
         Args:
             userdata (---): unused
 
         Returns:
-            string: Outcomes of this state: "played_enough" or "sleeping_time"
+            string: Outcomes of this state: "can_not_see_ball_3_s" or "sleeping_time"
         """
         rospy.loginfo('----------------------------------------------\n------------------------------ ENTERING STATE PLAY ---\n--------------------------------------------------------------------------')
 
@@ -432,17 +443,18 @@ class Play(smach.State):
         follow_ball_action_client.call_action()
 
         while True:
-            #If time to sleep, abort running action and change state
+            # If time to sleep, abort running action and change state
             if self.sleeping_timer.time_to_sleep:
                 self.cancel_goal_and_wait_till_done()
                 return 'sleeping_time'
 
-            #If can not see ball for 3 seconds: abort running action and go back to normal state
+            # If can not see ball for 3 seconds: abort running action and go back to normal state
             if not self.ball_visible_subscriber.is_ball_visible():
                 counter_no_ball += 1
             else:
                 counter_no_ball = 0
-            
+
+            # ball moved away again
             if counter_no_ball >= self.iterations_no_ball:
                 self.cancel_goal_and_wait_till_done()
                 return 'can_not_see_ball_3_s'
@@ -450,6 +462,11 @@ class Play(smach.State):
             self.rate.sleep()
 
     def cancel_goal_and_wait_till_done(self):
+        """Cancels goal and waits till server has really stopped
+
+        Args:
+            rate (rospy.Rate): rate for polling sleep
+        """
         if self.follow_ball_action_client.is_active():
             self.follow_ball_action_client.cancel_goal()
             # Wait unitl client indeed is not active anymore (robot should have stopped)
