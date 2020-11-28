@@ -14,6 +14,7 @@ class BallFollower:
 
         # Action look_left_right currently active?
         self.look_left_right_active = False
+        self.look_left_right_triggered = False
 
         # Ball visibility, position, radius
         self.ball_visible = False
@@ -41,7 +42,7 @@ class BallFollower:
         self.client.wait_for_server()
 
     def callback_ball_center_radius(self, msg):
-        self.ball_visible = msg.visible
+        self.ball_visible = msg.visible.data
         self.ball_center_x = msg.center_x.data
         self.ball_center_y = msg.center_y.data
         self.ball_radius = msg.radius.data
@@ -52,17 +53,23 @@ class BallFollower:
     def callback_follow_ball(self, goal):
         r = rospy.Rate(20)
         while not rospy.is_shutdown():
-        # Only do something, if ball_follower active and ball visible and not look_left_right active
+            # Only do something, if ball_follower active and ball visible and not look_left_right active
             if self.ball_visible and not self.look_left_right_active:
                 vel = Twist()
                 # Rotate to get ball into center of image
-                if abs(self.ball_center_x-400) > 20: #We are not properly aligned
-                    vel.angular.z = 0.002*(self.ball_center_x-400)
-                
+                if abs(self.ball_center_x-400) > 10:  # We are not properly aligned
+                    vel.angular.z = 0.004*(self.ball_center_x-400)
+                    # If another movement occurred, look_left_right can be triggered again
+                    self.look_left_right_triggered = False
+
                 desired_radius = 250
                 # We are aligned but too far or too close
-                if abs(self.ball_center_x-400) < 30 and abs(desired_radius - self.ball_radius) > 10: 
-                    vel.linear.x = 1*(desired_radius - self.ball_radius)
+                if abs(self.ball_center_x-400) < 40 and abs(desired_radius - self.ball_radius) > 10:
+                    vel.linear.x = 0.01*(desired_radius - self.ball_radius)
+                    #rotate very slow
+                    vel.angular.z = 0.0005*(self.ball_center_x-400)
+                    # If another movement occurred, look_left_right can be triggered again
+                    self.look_left_right_triggered = False
 
                 # We are aligned and close enough
                 if abs(self.ball_center_x-400) < 30 and abs(desired_radius - self.ball_radius) <= 10:
@@ -70,9 +77,16 @@ class BallFollower:
                     vel.angular.z = 0
 
                     goal = EmptyGoal()
-                    self.client.send_goal(goal, done_cb=self.callback_look_left_right_done)
-                    self.look_left_right_active = True
-                
+                    if not self.look_left_right_triggered:
+                        self.client.send_goal(
+                            goal, done_cb=self.callback_look_left_right_done)
+                        self.look_left_right_active = True
+                        self.look_left_right_triggered = True
+
+                self.pub_cmd_vel.publish(vel)
+
+            else:  # If we dont see tha ball or we look left right, dont move
+                vel = Twist()  # Zero twist
                 self.pub_cmd_vel.publish(vel)
 
             if self.server.is_preempt_requested():
@@ -81,20 +95,18 @@ class BallFollower:
                 self.client.cancel_goal()
                 self.server.set_preempted()
                 return
-                
 
             r.sleep()
-    
+
     def callback_stop_follow_ball(self):
         self.active = False
         # Cancel lool_left_right
         self.client.cancel_goal()
 
-    def callback_look_left_right_done(self):
+    def callback_look_left_right_done(self, status, result):
         self.look_left_right_active = False
 
 
 if __name__ == '__main__':
     rospy.init_node('ball_follower')
     BallFollower()
- 
