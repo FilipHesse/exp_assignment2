@@ -64,6 +64,7 @@
     <node name="navigator" pkg="exp_assignment2" type="navigator.py" output="screen" />
     <rosparam command="load" file="$(find exp_assignment2)/config/navigator_params.yaml" />
     <node name="image_processor" pkg="exp_assignment2" type="image_processor.py" output="screen" />
+    <node name="camera_controller" pkg="exp_assignment2" type="camera_controller.py" output="screen" />
   </group>
 
 

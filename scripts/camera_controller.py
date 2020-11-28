@@ -18,6 +18,7 @@ class CameraController:
             "camera_position_controller/command", Float64, queue_size=10)
 
         self.action_active = False  
+        self.cancel_requested = False
 
         self.publish_continuously_zero()
 
@@ -33,11 +34,22 @@ class CameraController:
         self.action_active = True
         self.pub.publish(Float64(pi/4))
         rospy.sleep(2)
+        if self.server.is_preempt_requested():
+            self.action_active = False
+            self.pub.publish(Float64(0))
+            self.server.set_preempted()
+            return
         self.pub.publish(Float64(-pi/4))
         rospy.sleep(2)
         self.pub.publish(Float64(0))
         self.server.set_succeeded()
         self.action_active = False
+
+    def cancel(self):
+        self.cancel_requested = True
+        self.action_active = False
+        self.pub.publish(Float64(0))
+
 
 
 if __name__ == '__main__':
