@@ -91,7 +91,7 @@ class RobotNavigator:
         """See video: https://www.youtube.com/watch?v=Qh15Nol5htM."""
         p = rospy.get_param("p_angular")
         thr = rospy.get_param("thr_angular")
-        rospy.loginfo("steering angle: {} robots angle: {}".format(self.steering_angle(goal_pose), self.pose.theta))
+        #rospy.loginfo("steering angle: {} robots angle: {}".format(self.steering_angle(goal_pose), self.pose.theta))
         vel = -p * self.angle_diff(goal_pose)  #MINUS, because we want to ratate in the inverse direction of the error angle (to make it zero!)
         if vel > thr:
             vel = thr
@@ -113,14 +113,21 @@ class RobotNavigator:
         aligning_done = False
 
         while self.euclidean_distance(goal_pose) >= distance_tolerance:
+            
+            #Make it preemptable
+            if self._as.is_preempt_requested():
+                vel = Twist()
+                self.velocity_publisher.publish(vel)
+                self._as.set_preempted()
+                return
+
             #Send feedback of action server
             self._feedback.position.position.x = self.pose.x
             self._feedback.position.position.y = self.pose.y
             self._feedback.stat = "moving"
-
             self._as.publish_feedback(self._feedback)
+
             # Porportional controller.
-            # https://en.wikipedia.org/wiki/Proportional_control
 
             # Linear velocity in the x-axis.
             if not aligning_done and abs(self.angle_diff(goal_pose)) > pi/20:

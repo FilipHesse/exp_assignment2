@@ -5,6 +5,7 @@ from exp_assignment2.msg import BallCenterRadius
 from nav_msgs.msg import Odometry
 from exp_assignment2.msg import EmptyAction, EmptyGoal
 import actionlib
+from actionlib_msgs.msg import GoalStatus
 
 
 class BallFollower:
@@ -58,18 +59,18 @@ class BallFollower:
                 vel = Twist()
                 # Rotate to get ball into center of image
                 if abs(self.ball_center_x-400) > 10:  # We are not properly aligned
+                    #rospy.loginfo("Not aligned")
                     vel.angular.z = 0.004*(self.ball_center_x-400)
                     # If another movement occurred, look_left_right can be triggered again
-                    self.look_left_right_triggered = False
 
                 desired_radius = 250
                 # We are aligned but too far or too close
                 if abs(self.ball_center_x-400) < 40 and abs(desired_radius - self.ball_radius) > 10:
+                    #rospy.loginfo("Wrong distance")
                     vel.linear.x = 0.01*(desired_radius - self.ball_radius)
                     #rotate very slow
                     vel.angular.z = 0.0005*(self.ball_center_x-400)
                     # If another movement occurred, look_left_right can be triggered again
-                    self.look_left_right_triggered = False
 
                 # We are aligned and close enough
                 if abs(self.ball_center_x-400) < 30 and abs(desired_radius - self.ball_radius) <= 10:
@@ -83,6 +84,9 @@ class BallFollower:
                         self.look_left_right_active = True
                         self.look_left_right_triggered = True
 
+                if self.ball_radius < desired_radius-50: # Ball further away
+                    self.look_left_right_triggered = False
+
                 self.pub_cmd_vel.publish(vel)
 
             else:  # If we dont see tha ball or we look left right, dont move
@@ -92,7 +96,8 @@ class BallFollower:
             if self.server.is_preempt_requested():
                 vel = Twist()
                 self.pub_cmd_vel.publish(vel)
-                self.client.cancel_goal()
+                if self.client.get_state() == GoalStatus.ACTIVE:
+                    self.client.cancel_goal()
                 self.server.set_preempted()
                 return
 

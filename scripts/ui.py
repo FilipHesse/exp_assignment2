@@ -72,7 +72,7 @@ def ball_position_client():
         counter += 1
 
         #Wait for a random time between 2 and 6 seconds 
-        rospy.sleep(random.uniform(2, 6))
+        rospy.sleep(random.uniform(4, 10))
 
 
 if __name__ == "__main__":

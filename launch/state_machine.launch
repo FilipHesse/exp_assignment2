@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+  <group ns="robot">
+    <node name="behavior_state_machine" pkg="exp_assignment2" type="behavior_state_machine.py" output="screen" />
+  </group>
+</launch>

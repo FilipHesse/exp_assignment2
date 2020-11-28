@@ -116,7 +116,7 @@ class FollowBallActionClient():
             "follow_ball: Waiting for action server to come up...")
         self.client.wait_for_server()
 
-    def call_action(self, x, y):
+    def call_action(self):
         """Use this function to set a new target position of the robot_pet  
 
         Args:
@@ -179,7 +179,7 @@ class SleepingTimer():
         """Initialize attributes
         """
         self.sleeping_time_range = (10, 15)  # Sleep between 10 and 15 seconds
-        self.awake_time_range = (20, 30)  # Be awake for ...
+        self.awake_time_range = (40, 60)  # Be awake for ...
         self.time_to_sleep = False
         self.timer = rospy.Timer(rospy.Duration(random.uniform(
             *self.awake_time_range)), self.callback, oneshot=True)
@@ -280,6 +280,7 @@ class Normal(smach.State):
                 return 'sleeping_time'
 
             if self.ball_visible_subscriber.is_ball_visible():
+                rospy.loginfo('Ball seen! Canceling go_to_target')
                 self.cancel_goal_and_wait_till_done(self.rate)
                 return 'sees_ball'
 
@@ -428,6 +429,8 @@ class Play(smach.State):
         counter_no_ball = 0
 
         # Call action client!
+        follow_ball_action_client.call_action()
+
         while True:
             #If time to sleep, abort running action and change state
             if self.sleeping_timer.time_to_sleep:
