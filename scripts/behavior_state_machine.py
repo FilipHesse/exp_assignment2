@@ -63,14 +63,14 @@ class SetTargetActionClient():
             x (int): target x-position of the robot
             y (int): target y-position of the robot
         """
-        if self.is_active:
+        if self.is_active():
             rospy.loginfo(
                 "set_target_position_client: Trying to give new target position, but action server is still processing old goal")
             return
 
         goal = PlanningGoal()
-        goal.target_pose.position.x = x
-        goal.target_pose.position.y = y
+        goal.target_pose.pose.position.x = x
+        goal.target_pose.pose.position.y = y
         self.client.send_goal(goal,
                               done_cb=self.callback_done)
 
@@ -86,8 +86,7 @@ class SetTargetActionClient():
             result (SetTargetPositionResult): Result of action: Position of the point
                 that was reached
         """
-        rospy.loginfo("SetTargetAction is done, position x={} y={} reached. Action state: {}".format(
-            result.final_position.x, result.final_position.y, state))
+        rospy.loginfo("SetTargetAction is done!")
 
     def cancel_goal(self):
         self.client.cancel_goal()
@@ -112,9 +111,9 @@ class FollowBallActionClient():
         """Creates the client and waits for action server to be available
         """
         self.client = actionlib.SimpleActionClient(
-            'ball_position_size', EmptyAction)
+            'follow_ball', EmptyAction)
         rospy.loginfo(
-            "ball_position_size_client: Waiting for action server to come up...")
+            "follow_ball: Waiting for action server to come up...")
         self.client.wait_for_server()
 
     def call_action(self, x, y):
@@ -124,17 +123,20 @@ class FollowBallActionClient():
             x (int): target x-position of the robot
             y (int): target y-position of the robot
         """
+
+        rospy.loginfo(
+            "follow_ball: Action server has been called")
+
         if self.is_active():
             rospy.loginfo(
-                "ball_position_size_client: Trying to give new target position, but action server is still processing old goal")
+                "follow_ball: Trying to follow ball, but action server already busy doing it")
             return
 
         goal = PlanningGoal()
         self.client.send_goal(goal,
                               done_cb=self.callback_done)
 
-        rospy.loginfo(
-            "ball_position_size_client: Action server has been called")
+
 
     def callback_done(self, state, result):
         """This callback gets called when action server is done
@@ -239,7 +241,7 @@ class Normal(smach.State):
             sleeping_timer (SleepingTimer): See class description
         """
 
-        smach.State.__init__(self, outcomes=['cmd_play', 'sleeping_time'])
+        smach.State.__init__(self, outcomes=['sees_ball', 'sleeping_time'])
 
         self.set_target_action_client = set_target_action_client
         self.ball_visible_subscriber = ball_visible_subscriber
@@ -268,6 +270,8 @@ class Normal(smach.State):
         """
 
         rospy.loginfo('----------------------------------------------\n------------------------------ ENTERING STATE NORMAL ---\n--------------------------------------------------------------------------')
+
+        sleep_iteration_counter = 0
 
         while True:
             # Check if its time to sleep
@@ -388,7 +392,7 @@ class Play(smach.State):
             set_target_action_client (SetTargetActionClient): See class description
             sleeping_timer (SleepingTimer): See class description
         """
-        smach.State.__init__(self, outcomes=['played_enough', 'sleeping_time'])
+        smach.State.__init__(self, outcomes=['can_not_see_ball_3_s', 'sleeping_time'])
         self.follow_ball_action_client = follow_ball_action_client
         self.ball_visible_subscriber = ball_visible_subscriber
         self.sleeping_timer = sleeping_timer
