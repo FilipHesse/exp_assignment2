@@ -1,4 +1,4 @@
-# experimental_robotics_lab1
+# exp_assignment2
 <!-- PROJECT SHIELDS -->
 <!--
 *** I'm using markdown "reference style" links for readability.
@@ -19,19 +19,19 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <h3 align="center">ROBOT_PET</h3>
+  <h3 align="center">EXP_ASSIGNMENT2</h3>
 
   <p align="center">
-    This repository contains the first assignment of the experimental robotics laboratory course 2020 at the University of Genoa.
+    This repository contains the second assignment of the experimental robotics laboratory course 2020 at the University of Genoa.
     It can be used to play around with ros. It contains only simulations, so no special hardware is needed.
     The doxygen-documantation of the code can be found here:
     <br />
-    <a href="https://FilipHesse.github.io/experimental_robotics_lab1"><strong> « « API » » </strong></a>
+    <a href="https://filiphesse.github.io/exp_assignment2/"><strong> « « API » » </strong></a>
     <br />
     <br />
-    <a href="https://github.com/FilipHesse/experimental_robotics_lab1/issues">Report Bug</a>
+    <a href="https://github.com/FilipHesse/exp_assignment2/issues">Report Bug</a>
     ·
-    <a href="https://github.com/FilipHesse/experimental_robotics_lab1/issues">Request Feature</a>
+    <a href="https://github.com/FilipHesse/exp_assignment2/issues">Request Feature</a>
   </p>
 </p>
 
@@ -40,7 +40,7 @@
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
 
-- [experimental_robotics_lab1](#experimental_robotics_lab1)
+- [exp_assignment2](#exp_assignment2)
   - [Table of Contents](#table-of-contents)
   - [About The Project](#about-the-project)
     - [Built With](#built-with)
@@ -67,37 +67,33 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-The aim of this assignemt is to get acquainted with building finite state machines
-with using smach and designing an appropritate software architecture for the following scenario:
-A robot pet (which is simulated in our case) has 3 states: 
-* normal: The robot moves around randomly
-* play: The robot approaches the person, waits for a position command, goes to that position and comes back to the user
-* sleep: The robot returns to the position of a house  and sleeps for some time, then it wakes up and returns to normal
+The aim of this assignments is to get acquainted with working with gazebo
+simulations including plugins like sensors and controllers. It is based on the first assignment, where parts of this code were implemented already:
+* [assignment1](https://github.com/FilipHesse/experimental_robotics_lab1)
+
+A wheeled robot moves in a simulated environment, where there is also a ball model,
+that is arbitrarily moving around. The robot has a simulated camera on top of his head.
+When the robot sees the ball, it starts to follow it.
+When the robot is close enough to the ball and the ball is not moving, the robot looks to the left, then to the right and then to the front again. When the robots looses the robot (does not see it for 3 seconds), it starts moving arbitrarily again.
+At some arbitrary moments, the robot goes to a gazebo to sleep for a random time period (within specific bounds).
 
 ### Built With
 
 * [ROS noetic](http://wiki.ros.org/noetic/Installation)
 * [Python3](https://www.python.org/downloads/)
 * [Smach](http://wiki.ros.org/smach)
+* [Gazebo](http://gazebosim.org/)
 
 ## Software architecture
 
 ### Component Diagram
-![Component Diagram](./docs/diagrams/EXP_ASS1_UML_Component_diagram.jpg)
+![Component Diagram](./docs/EXP_ASS2_UML_Component_diagram.jpg)
 
-The ros package robot_pet consits of 6 components which are 
-* <strong>ui</strong> : 
-  * This node is the simulated user interface. It is a service client, that creates commands to simulate the users behavior. The programmer has chosen a service over a publisher, because we want to
-  make sure no message gets lost.
-  It creates and sends two types of commands:
-    1) "play" 0 0 to notify the robot to go to playing mode
-    2) "go_to" x y to give the robot a target position.
-  * Each fifth command is a play command, the other commands are go_to commands.
-  Between two commands, there is always a rondom time passing between 0.5 and 5 seconds.
-  * The commands are sent with a random time delay between 0.5 and 5 seconds
-  * Requires ROS parameters: 
-    * /map_width
-    * /map_height
+The ROS package robot_pet consist of 9 components which are
+* <strong>ui</strong> :
+  * This node is the simulated user interface to create target positions for the ball. These positions are then sent to an action server (ball/position_server). The ball is moved to random positions at random times. The positions are uniformly random in the range from -8 to 8 for both coordinates (= map size) ,each fifth position has a negative z_value (ball should disappear). The time between two commands is uniformly random between 4 and 10 seconds.
+* <strong>ball/position_server</strong> :
+  * This is an action server node for navigating the ball to a point. It publishes velocities to control the ball to a desired point, that is specified in the action goal.
 * <strong>behavior_state_machine</strong> :
   * This is the heart of robot_pet package, which defines the robots behavior
   * Contains a finite state machine implemented in smach. The 3 states of the
@@ -106,103 +102,69 @@ The ros package robot_pet consits of 6 components which are
   servers, action clients and publishers are implemented within separate
   classes. All these interfaces are then passed to the smach-states while they
   are constructed, in order to make the interfaces accessible for the states.
-  * Requires ROS parameters: 
-    * /map_width
-    * /map_height
-* <strong>localizer_navigator</strong> :
-  * Simple ROS-node, which simulates the robot naviagation. It simulates to localize the robot and navigates to next target point
-  *  It contains an action server, that can receive a new target position. The
-  server simply waits for some time and considers the position to be reached.
-  Then the positions is published to the topic pet_position.
-  * The programmer has chosen an action server instead of a service, because the
-  action server does not block the client. This way the client can continue
-  working while the result of this action is computed.
-* <strong>user_localizer</strong> :
-  * This node simulates a user moving in the environment. It publishes the new user position at a low frequency of 0.25 Hz. Each time the position is changed, the user has not moved further than one step in x and one step in y.
-  * Requires ROS parameters: 
-    * /map_width
-    * /map_height
-    * /user_pos_x
-    * /user_pos_y
-* <strong>map</strong> :
-  * The map node contains all the knowledge about the map itself, which is simply a rectangular grid with integer positions. It contains information about the dimensions of the map and the positions of all objects: pet, user, house, pointer. 
-  * The three subscribers subscribe to the variable positions of the objects in
-  the map: user, pet, pointer. The server provides the service get_position to the ros environment. The publisher publishes an image of the current map each time the map is updated.
-  * Requires ROS parameters: 
-    * /map_width
-    * /map_height
-    * /user_pos_x
-    * /user_pos_y
-    * /user_house_x
-    * /user_house_y
-    * /user_pet_x
-    * /user_pet_y
+* <strong>robot/image_processor</strong> :
+  * This node subscribes to the image topic of the camera on top of the robot and processes the image in the following way: It detects the green ball by performing color based image segmentation. The contour and the centroid are then computed. It publishes 3 topics:
+    * Publishes, if the ball is visible (camera1/ball_visible)
+    * Publishes the processed camera image with the marked contour and centroid of the ball
+    * Publishes the ball center and radius (camera1/ball_center_radius)
 * <strong>rqt_image_view</strong> :
-  * That node is a built in ROS node, so it has not been implemented in this context. It is used to display the current positions of the actors: House, Pet, User, Pointer
-  
-  ![Visualization](./docs/screenshots/visualization.png)
+  * That node is a built in ROS node, so it has not been implemented in this context. It is used to display the processed camera image with the ball
+* <strong>robot/camera_controller</strong> :
+  * This ROS continuously controls the camera link. The camera controller continuously publishes the angle zero to the camera_position_controller, which is handled by the controller manager. If the action look_left_right is called, the callback makes the robot look to the left (45°), then wait 2 seconds, then look to the right (45°), wait again for two seconds and finally look to the center. The action is preemptable after the waiting time of 2 seconds in the middle
+* <strong>robot/ball_follower</strong> :
+  * This node makes the robot follow the ball by publishing appropriate velocity commands. Image based visual servoing is implemented: the node knows from a subscribed topic (camera1/ball_center_radius) the position and the size of the ball in the image frame. From this information the node computes an angular and linear velocity such that the ball will be located in the image center with a specified size (-> distance).
+* <strong>robot/navigator</strong> :
+  * This is a ROS node, which allows to navigate the robot to desired points. An action server takes target positions and publishes computed velocities to reach them. A proportional controller with a threshold for the maximal speed is implemented. This way angular and linear velocities are computed to reach the target positions.
+* <strong>gazebo</strong> :
+  * Gazebo is used to simulate and visualize the entire environment. The following screenshot shows an overview of the setting:
+  ![Visualization](./docs/world.png)
+  * The gazebo in the left corner is the house for the robot, where it goes to 'sleep'
+  * The Robot is shown below. It is is driven with a differential controller. The two big wheels are motorized. The small castor wheel in the back is just an idler to make the robot stable. The head (blue) can be rotated around the z-axis is a range [-pi/4, +pi/4].
+  ![Visualization](./docs/robot.jpg)
 
 ### Launchfiles
 
-Tho launchfiles are present in the robot_pet package:
-* run_system.launch: This file launches all the above nodes with some default 
-ROS parameters.
-* params.launch: This launchfile only sets default ROS parameters. This enables the user run single nodes, that may require sompe parameters
-  
+To launch the entire system, the following launchfile can be used:
+* everything.launch
+
+To properly observe, how the state machine is working, it is useful to launch two launch files separately. This allows to directly see only the loginfos from the state machine
+* everything_without_state_machine.launch
+* state_machine.launch
+
 ### Ros parameters
 
-Several ROS parameters can be set to modify this software. 
-* /map_width: Dimension of rectangular map in x-direction
-* /map_height: Dimension of rectangular map in y-direction
-* /user_pos_x: Startposition of user: x
-* /user_pos_y: Startposition of user: y
-* /user_house_x: Startposition of house: x
-* /user_house_y: Startposition of house: y
-* /user_pet_x: Startposition of pet: x
-* /user_pet_y: Startposition of pet: y
-  
+Several ROS parameters can be set to modify this software.
+* /p_linear: linear proportional gain for the navigator
+* /thr_linear: linear threshold for the navigator
+* /p_angular: angular proportional gain for the navigator
+* /thr_angular: angular threshold for the navigator
+
 ### Messages, services and actions
 
-The following <strong>ROS-messages</strong> have been defined:
-* Point2d.msg: Contains x and y coordinates of a point
+The following <strong>ROS-message</strong> has been defined:
+* BallCenterRadius.msg: Contains the center and the radius of the ball in the image plane. Also contains a boolean flag showing, if the ball is visible.
 ```sh
-int64 x
-int64 y
+std_msgs/Bool visible
+std_msgs/Int64 center_x
+std_msgs/Int64 center_y
+std_msgs/Int64 radius
 ```
-* Point2d.msg: Contains a Point2d and a flag on. The additional flag specifies, if the pointer position should be displayed or not
+The following <strong>ROS-actions</strong> have been defined:
+* Planning.action: In the goal section, the target_pose can be specified. The goal section is empty and the feedback section contains a string for the status and a current position.
 ```sh
-robot_pet/Point2d point
-bool on
-```
-The following <strong>ROS-services</strong> have been defined:
-* GetPosition.srv: The caller specifies a string ("pet", "user", "house", "pointer") of the object. If the specified object is part of the map, the return value is success = True and the point contains the according coordinates. Else the success flag is False.
-```sh
-Header header
-string object 
+geometry_msgs/PoseStamped target_pose
 ---
-bool success
-robot_pet/Point2d point
+---
+string stat
+geometry_msgs/Pose position
 ```
 
-* PetCommand.srv: A string command ("play", "go_to") can be sent. If the command is "go_to", then a targetpoint should be specified. If the command is "play", the point is ignored.
+* Empty.action: THis is an empty action. It is used to activate the ball following and to cancel it.
 ```sh
-Header header
-string command 
-robot_pet/Point2d point
+---
 ---
 ```
 The following <strong>ROS-action</strong> has been defined:
-
-* SetTargetPositionAction: This action is used to set a target position of the robot. The caller pecifies a target, which is a Point2d (see above). When the position is reached, the action server confirms the final position by sending back the target point.
-```sh
-#Goal
-robot_pet/Point2d target
----
-#Result
-robot_pet/Point2d final_position
----
-#Feedback
-```
 
 ### State Machine
 ![State Diagram](./docs/diagrams/EXP_ASS1_UML_State_diagram.jpg)
@@ -261,7 +223,7 @@ This package was developed on Ubuntu 20.04, using [ROS noetic](http://wiki.ros.o
 
 1. Clone the repo
 ```sh
-git clone https://github.com/FilipHesse/experimental_robotics_lab1.git
+git clone https://github.com/FilipHesse/exp_assignment2.git
 ```
 
 <!-- USAGE EXAMPLES -->
@@ -282,8 +244,8 @@ source devel/setup.bash
 ```
 4) Run the launchfile:
 ```
-roslaunch robot_pet run_system.launch 
-``` 
+roslaunch robot_pet run_system.launch
+```
 
 All nodes will startup. One screen will show the output of the map.
 rqt_console is also starting up. To understand the robots behavior, it is best to focus on the loginfo messages, that come from the node behavior_state_machine. To do so start the flow of messages and sort the messages according to "Node". Then scroll to the messages, that come from behavior_state_machine. The user can see logs about incoming commands, called actions, state transitions and more. This behavior can simultaniously be compared to the rqt_image_viewer.
@@ -292,7 +254,7 @@ Unfortunately the smach_viewer can not be used due to compatibility issues with 
 
 
 ## Working hypothesis and environment
-The pet is moving in a two dimensional integer domain. The map is just a rectangle, whose size is configured in the ROS parameter server. 
+The pet is moving in a two dimensional integer domain. The map is just a rectangle, whose size is configured in the ROS parameter server.
 There are no obstacles and no collisions defined, so two objects can have the same position.
 The robot will reveive commands even when the robot is moving and process them if they are valid.
 
@@ -314,10 +276,10 @@ When playing the game and the pet goes to the user, it aims to go exactly to the
 The UI is very simplistic and may have undetected weaknesses or bugs. Generally it still fullfills the purpose to visualize what is going on is a vey simple way.
 
 ## Possible technical improvements
-The state PLAY could be improved: 
+The state PLAY could be improved:
 The state machine could check more frequently (when going to target, while coming back) if it is time to sleep. Moving actions could then be preempted and the state could be changed immediately. Navigation could also be implemented properly, so that robot stops at an intermediate position, when the "go to target" action is preempted
 
-The project could then be extended im multiple ways, e.g. by implementing obstacles and collisions. For this case it might be usefull tu use simulator tools, such as Stage. 
+The project could then be extended im multiple ways, e.g. by implementing obstacles and collisions. For this case it might be usefull tu use simulator tools, such as Stage.
 
 <!-- LICENSE -->
 ## License
@@ -326,7 +288,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 
 
-Project Link: [https://github.com/FilipHesse/experimental_robotics_lab1](https://github.com/FilipHesse/experimental_robotics_lab1)
+Project Link: [https://github.com/FilipHesse/exp_assignment2](https://github.com/FilipHesse/exp_assignment2)
 
 
 
@@ -339,16 +301,16 @@ Filip Hesse - S4889393(at)studenti.unige.it
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/FilipHesse/experimental_robotics_lab1.svg?style=flat-square
-[contributors-url]: https://github.com/FilipHesse/experimental_robotics_lab1/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/FilipHesse/experimental_robotics_lab1.svg?style=flat-square
-[forks-url]: https://github.com/FilipHesse/experimental_robotics_lab1/network/members
-[stars-shield]: https://img.shields.io/github/stars/FilipHesse/experimental_robotics_lab1.svg?style=flat-square
-[stars-url]: https://github.com/FilipHesse/experimental_robotics_lab1/stargazers
-[issues-shield]: https://img.shields.io/github/issues/FilipHesse/experimental_robotics_lab1.svg?style=flat-square
-[issues-url]: https://github.com/FilipHesse/experimental_robotics_lab1/issues
-[license-shield]: https://img.shields.io/github/license/FilipHesse/experimental_robotics_lab1.svg?style=flat-square
-[license-url]: https://github.com/FilipHesse/experimental_robotics_lab1/blob/master/LICENSE.txt
+[contributors-shield]: https://img.shields.io/github/contributors/FilipHesse/exp_assignment2.svg?style=flat-square
+[contributors-url]: https://github.com/FilipHesse/exp_assignment2/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/FilipHesse/exp_assignment2.svg?style=flat-square
+[forks-url]: https://github.com/FilipHesse/exp_assignment2/network/members
+[stars-shield]: https://img.shields.io/github/stars/FilipHesse/exp_assignment2.svg?style=flat-square
+[stars-url]: https://github.com/FilipHesse/exp_assignment2/stargazers
+[issues-shield]: https://img.shields.io/github/issues/FilipHesse/exp_assignment2.svg?style=flat-square
+[issues-url]: https://github.com/FilipHesse/exp_assignment2/issues
+[license-shield]: https://img.shields.io/github/license/FilipHesse/exp_assignment2.svg?style=flat-square
+[license-url]: https://github.com/FilipHesse/exp_assignment2/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/FilipHesse
 [product-screenshot]: images/screenshot.png
