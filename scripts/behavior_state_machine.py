@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Heart of robot_pet package: defines robots behavior
+"""Heart of exp_assignment2 package: defines robots behavior
 
 Contains a finite state machine implemented in smach. The 3 states of the
 robot pet are NORMAL, PLAY and SLEEP. The state diagram can be found in the
