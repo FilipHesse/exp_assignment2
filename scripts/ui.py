@@ -1,22 +1,11 @@
 #!/usr/bin/env python3
 """Simulated User Interface
 
-This script creates a ROS node, which simulates a user interface to
-communicate with the robot pet.
+This script creates a ROS node, which simulates a user interface to move the
+ball.
 
-It calls the pet_command service to send a command which consists of a
-string to specify the command type and a robot_pet/Point2d to specify the
-desired position in case it is a "go_to" command.
-
-The programmer has chosen a service over a publisher, because we want to
-make sure no message gets lost.
-
-    Requirements:
-        The following parameters need to be set in the ros parameter server:
-            /map_width
-            /map_height
-        You can use the launchfile params.launch to set these to some 
-        default values
+The ball is moved to randompositions at random times, see class definitions for
+details
 """
 
 from __future__ import print_function
@@ -30,7 +19,7 @@ def ball_position_client():
     """Action client, that sends target ball positions to the ball/position server 
 
     The positions are random, each fivth position has a negative z_value (ball should disappear)
-    The time between two caommands is between 2 and 6 seconds
+    The time between two caommands is between 4 and 10 seconds
     """
 
 
@@ -49,6 +38,7 @@ def ball_position_client():
         goal.header = rospy.Header()
 
         pose_stamped = geometry_msgs.msg.PoseStamped()
+        
         #Each fivth position is below the ground
         if (counter % 5) == 4:  # 4, first time when counter = 5-1
             

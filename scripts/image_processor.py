@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+""" ROS Node, that processes the camera image by detecting the ball
+
+Find further details in class description.  
+""" 
 
 import rospy
 
@@ -14,17 +18,35 @@ from exp_assignment2.msg import BallCenterRadius
 
 
 
-class NumberCounter:
+class ImageProcessor:
+    """ImageProcessor node, that does the following things
+
+    - Detects the ball with its centroid and contour
+    - Publishes, if the ball is visible (camera1/ball_visible)
+    - Publishes the processed camera image with the marked contour
+        and centroid of the ball
+    - Publishes the ball center and radius (camera1/ball_center_radius)
+    """
     def __init__(self):
+        """Initializes publishers and subscribers and CvBridge
+        """
         self.counter = 0
         self.pub_img = rospy.Publisher("camera1/image_processed", Image, queue_size=1)
         self.pub_vis = rospy.Publisher("camera1/ball_visible", Bool, queue_size=1)
-        self.pub_cr = rospy.Publisher("camera1/ball_center_radius", BallCenterRadius, queue_size=1)
+        self.pub_cr = rospy.Publisher( "camera1/ball_center_radius", BallCenterRadius, queue_size=1)
         self.number_subscriber = rospy.Subscriber("camera1/image_raw", Image, self.callback_raw_image)
 
         self.bridge = CvBridge()
         
+    
     def callback_raw_image(self, msg):
+        """ Callback: new image came is -> Process it
+
+        After detecting the ball, three topics are published:
+            camera1/image_processed
+            camera1/ball_visible
+            camera1/ball_center_radius
+        """
         self.image = self.bridge.imgmsg_to_cv2(msg, 'bgr8')
 
         greenLower = (50, 50, 20)
@@ -73,8 +95,10 @@ class NumberCounter:
         self.pub_cr.publish(cr)
 
 
-if __name__ == '__main__':
-    rospy.init_node('number_counter')
-    NumberCounter()
+if __name__ == "__main__":
+    """Main function of this script
+    """
+    rospy.init_node('image_processor')
+    ImageProcessor()
     rospy.spin()
 

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+"""ROS node, which allows to navigate the robot to desired points
+"""
 import rospy
 
 from geometry_msgs.msg import Twist
@@ -12,12 +14,19 @@ from tf import transformations
 import actionlib
 
 class Pose():
+    """Simplified helper class to represent a 2D pose
+    """
     def __init__(self):
         self.x = 0
         self.y = 0
         self.theta = 0
 
 class RobotNavigator:
+    """Action server takes target positions, publishes velovities to reach them
+
+    A proportional controller is implemented to reach the target positions by
+    computing angular and linear velocities
+    """
     # create messages that are used to publish feedback/result
     _feedback = exp_assignment2.msg.PlanningFeedback()
     _result = exp_assignment2.msg.PlanningResult()
@@ -45,7 +54,10 @@ class RobotNavigator:
 
     def update_pose(self, data):
         """Callback function which is called when a new message of type Odometry is
-        received by the subscriber."""
+        received by the subscriber
+        
+        Updates pose of robot
+        """
         odom = data
         position = odom.pose.pose.position
 
@@ -64,7 +76,11 @@ class RobotNavigator:
                     pow((goal_pose.y - self.pose.y), 2))
 
     def linear_vel(self, goal_pose):
-        """See video: https://www.youtube.com/watch?v=Qh15Nol5htM."""
+        """Compute linear velocity
+        
+        Args:
+            goal_pose(Pose): Pose of the goal
+        """
         p = rospy.get_param("p_linear")
         thr = rospy.get_param("thr_linear")
         vel = p * self.euclidean_distance(goal_pose)
@@ -75,11 +91,22 @@ class RobotNavigator:
         return vel
 
     def steering_angle(self, goal_pose):
-        """See video: https://www.youtube.com/watch?v=Qh15Nol5htM."""
+        """Compute angle of the target in 2D space
+
+        Args:
+            goal_pose(Pose): Pose of the goal
+        """
         return atan2(goal_pose.y - self.pose.y, goal_pose.x - self.pose.x)
         
 
     def angle_diff(self,goal_pose):
+        """ Difference of robot angle and target angle
+        
+        range: [-pi, pi]
+
+        Args:
+            goal_pose(Pose): Pose of the goal
+        """
         angle = self.steering_angle(goal_pose) - self.pose.theta
         if angle > pi:
             angle = angle - 2*pi
@@ -88,7 +115,13 @@ class RobotNavigator:
         return angle
 
     def angular_vel(self, goal_pose):
-        """See video: https://www.youtube.com/watch?v=Qh15Nol5htM."""
+        """Compute angular velocity
+        
+        Proportional controller with threshold for maximal speed
+                
+        Args:
+            goal_pose(Pose): Pose of the goal
+        """
         p = rospy.get_param("p_angular")
         thr = rospy.get_param("thr_angular")
         #rospy.loginfo("steering angle: {} robots angle: {}".format(self.steering_angle(goal_pose), self.pose.theta))
@@ -100,7 +133,13 @@ class RobotNavigator:
         return vel
 
     def move2goal(self, goal):
-        """Moves the turtle to the goal."""
+        """Action Callback: Moves the turtle to the goal
+
+        Implements proportional controller for angular and linear veolcity
+
+        Args:
+            goal(PlanningGoal): message: goal pose
+        """
         goal_pose = Pose()
 
         goal_pose.x = goal.target_pose.pose.position.x
@@ -163,6 +202,8 @@ class RobotNavigator:
         
 
 if __name__ == '__main__':
+    """Entry point of script
+    """
     try:
         n = RobotNavigator()
         rospy.spin()

@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-    """File contains node Ball Follower
-    For details see class description
-    """
+"""File contains node BallFollower
+
+For details see class description
+"""
 import rospy
 from geometry_msgs.msg import Twist, Pose
 from exp_assignment2.msg import BallCenterRadius
@@ -148,7 +149,7 @@ class BallFollower:
 
 
 if __name__ == '__main__':
-        """Entry point for script
-        """
+    """Entry point for script
+    """
     rospy.init_node('ball_follower')
     BallFollower()

@@ -76,8 +76,8 @@ class CameraController:
         self.action_active = False
 
 if __name__ == '__main__':
-        """Entry point of script
-        """
+    """Entry point of script
+    """
     rospy.init_node('camera_controller')
     server = CameraController()
     rospy.spin()

@@ -1,4 +1,11 @@
 #! /usr/bin/env python3
+"""Ros node for directing the ball to a point
+
+Node publishes velocities to control the ball to a
+desired point, that is specified in the action goal 
+"""
+
+
 # import ros stuff
 import rospy
 from sensor_msgs.msg import LaserScan
@@ -38,9 +45,9 @@ pubz = None
 act_s = None
 
 # callbacks
-
-
 def clbk_odom(msg):
+    """ Callback to update ball pose
+    """
     global position_
     global pose_
     global yaw_
@@ -51,12 +58,16 @@ def clbk_odom(msg):
 
 
 def change_state(state):
+    """Change state of navigation
+    """
     global state_
     state_ = state
     print ('State changed to [%s]' % state_)
 
 
 def go_straight_ahead(des_pos):
+    """Navigates ball in a straight line
+    """
     global pub, state_, z_back
     err_pos = math.sqrt(pow(des_pos.y - position_.y, 2) +
                         pow(des_pos.x - position_.x, 2))
@@ -92,6 +103,8 @@ def go_straight_ahead(des_pos):
 
 
 def done():
+    """Publishes velocity zero
+    """
     twist_msg = Twist()
     twist_msg.linear.x = 0
     twist_msg.linear.y = 0
@@ -99,6 +112,10 @@ def done():
 
 
 def planning(goal):
+    """ Callback, when planning is called
+    
+    Coordinate planning and return feedbackto the action client
+    """
 
     global state_, desired_position_
     global act_s
@@ -141,6 +158,8 @@ def planning(goal):
 
 
 def main():
+    """Initializes publishers, subscribers, action serve
+    """
     global pub, active_, act_s, pubz
     rospy.init_node('go_to_point')
     pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
