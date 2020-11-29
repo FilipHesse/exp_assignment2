@@ -159,56 +159,72 @@ string stat
 geometry_msgs/Pose position
 ```
 
-* Empty.action: THis is an empty action. It is used to activate the ball following and to cancel it.
+* Empty.action: This is an empty action. It is used to activate the ball following and to cancel it.
 ```sh
 ---
 ---
 ```
-The following <strong>ROS-action</strong> has been defined:
 
 ### State Machine
-![State Diagram](./docs/diagrams/EXP_ASS1_UML_State_diagram.jpg)
+![State Diagram](./docs/EXP_ASS2_UML_State_diagram.jpg)
 The above state diagram shows clearly the three states of the system:
-* NORMAL: The robot moves randomly from one position to another. It can transition to the PLAY state by receiving a user command to play. If the sleeping timer triggers sleeping time, then the state transitions to SLEEP.
+* NORMAL: The robot moves randomly from one position to another. It transitions to the PLAY state when it sees the ball. If the sleeping timer triggers sleeping time, then the state transitions to SLEEP.
 * SLEEP: The robot approaches the house and stays there, until the sleeping timer triggers, that it's time to wake up (transition "slept_enough"). Then the robot returns to the state NORMAL
-* PLAY: The robot performs the following actions in a loop:
-  1) Go to user
-  2) Wait for a command that specifies a new target
-  3) Go to new target
-  4) Repeat
-  * When a random number of games has been reached, the robot stops playing ("played_enough") and returns to the normal state. When the sleeping timer triggers time to sleep, the state transitions to SLEEP.
+* PLAY: The robot follows the ball. When it has reached the ball and does not move anymore, then it looks to the left, waits, looks to the right, waits and finally looks back to the center. When the robot stops seeing the ball for 3 seconds, it returns to the state NORMAL. If the sleeping timer triggers "time_to_sleep", the robot transitions to the SLEEP state
 
 ## Packages and file list
- The only package in the project, which should be used it the package <strong>robot_pet</strong>. The other packages were all introduced to make the smach_viewer run, which was not successful yet. The smach_viewer is written in python2 while ROS noetic only supports python3. The additional packages still remain inside this repository for the case a solution will be found to make the smach_viewer run.
-
- The following file tree shows the contents of the robot_pet package. It is located as usual inside catkin_ws/src/:
+The provided code contains only the package "exp_assignment2"
+Inside that package all the nodes, models etc. are created.
 
 ```sh
-robot_pet/
+exp_assignment2/
 ├── action
-│   └── SetTargetPosition.action
+│   ├── Empty.action
+│   └── Planning.action
 ├── CMakeLists.txt
+├── config
+│   ├── house.yaml
+│   ├── motors_config.yaml
+│   └── navigator_params.yaml
+├── docs
+│   ├── annotated.html
+│   ├── bc_s.png
+│   ├── ...
+│   ...
+├── Exp_Rob_assignment2.pdf
 ├── launch
-│   ├── params.launch
-│   └── run_system.launch
+│   ├── everything.launch
+│   ├── everything_without_state_machine.launch
+│   ├── rviz_with_joint_state_pub.launch
+│   ├── state_machine.launch
+│   ├── test_image_processor.launch
+│   └── test_navigator.launch
 ├── msg
-│   ├── Point2d.msg
-│   └── Point2dOnOff.msg
+│   └── BallCenterRadius.msg
 ├── package.xml
+├── README.md
+├── rviz
+│   └── rviz_cfg.rviz
 ├── scripts
+│   ├── ball_follower.py
 │   ├── behavior_state_machine.py
-│   ├── images
-│   │   ├── house.jpg
-│   │   ├── pet.jpg
-│   │   ├── pointer.jpg
-│   │   └── user.jpg
-│   ├── localizer_navigator.py
-│   ├── map.py
-│   ├── ui.py
-│   └── user_localizer.py
-└── srv
-    ├── GetPosition.srv
-    └── PetCommand.srv
+│   ├── camera_controller.py
+│   ├── go_to_point_ball.py
+│   ├── image_processor.py
+│   ├── navigator.py
+│   └── ui.py
+├── urdf
+│   ├── ball.gazebo
+│   ├── ball.xacro
+│   ├── human.urdf
+│   ├── robot.gazebo
+│   └── robot.xacro
+└── worlds
+    ├── gazebo
+    │   ├── model.config
+    │   └── model.sdf
+    └── world_assignment.world
+
 ```
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -220,8 +236,11 @@ To get a local copy up and running follow these simple steps.
 This package was developed on Ubuntu 20.04, using [ROS noetic](http://wiki.ros.org/noetic/Installation) and [Python3](https://www.python.org/downloads/) (Click on ROS or python for installation instructions)
 
 ### Installation
+1. Create your catkin workspace
 
-1. Clone the repo
+2. Create a folder /src inside the catkin workspace
+
+1. Inside that folder clone the repo
 ```sh
 git clone https://github.com/FilipHesse/exp_assignment2.git
 ```
@@ -230,6 +249,7 @@ git clone https://github.com/FilipHesse/exp_assignment2.git
 ## Usage
 
 To run the project, perform the following steps (from catkin_ws):
+
 1) Source the ros distribution
 ```sh
 source /opt/ros/noetic/setup.bash
@@ -243,43 +263,39 @@ catkin_make
 source devel/setup.bash
 ```
 4) Run the launchfile:
+```sh
+roslaunch exp_assignment2 everything.launch
 ```
-roslaunch robot_pet run_system.launch
+Alternatively, for a better understanding of the state_machine loginfos run the following two launchfiles from two different terminals:
+```sh
+roslaunch exp_assignment2 everything_without_state_machine.launch
+roslaunch exp_assignment2 state_machine.launch
 ```
 
-All nodes will startup. One screen will show the output of the map.
-rqt_console is also starting up. To understand the robots behavior, it is best to focus on the loginfo messages, that come from the node behavior_state_machine. To do so start the flow of messages and sort the messages according to "Node". Then scroll to the messages, that come from behavior_state_machine. The user can see logs about incoming commands, called actions, state transitions and more. This behavior can simultaniously be compared to the rqt_image_viewer.
-
-Unfortunately the smach_viewer can not be used due to compatibility issues with python3.
-
+For understanding the internal behavior, use the second alternative. All the nodes will start up. Gazebo will open and display the world with the robot and the ball. Another rqt_image_view window will open, that displays the processed camera image with the highlighted ball if visible.
+The robot will start moving according to the described state machine. Now, it is useful to observe the terminal, where state_machine.launch was started. All state transitions and relevant events will be displayed. When the robot goes to sleep, it moves into gazebo, which does not have collision defined. It just aims to mark the position of the house/bed.
 
 ## Working hypothesis and environment
-The pet is moving in a two dimensional integer domain. The map is just a rectangle, whose size is configured in the ROS parameter server.
-There are no obstacles and no collisions defined, so two objects can have the same position.
-The robot will reveive commands even when the robot is moving and process them if they are valid.
+The pet is moving in a two dimensional domain in the range [-8, 8] for both coordinates. The random movements of the robot are always constrained stay inside those boundaries, no position commands beyond them are given. The navigating robot is not able to avoid any obstacles. The camera image processing does not take any light changes into account, so the system only works for sure in the given simulated setting.
 
 ## Systems features
-The user is not constrained to give commands in a specific order. This is why the user in this implementation gives commands completely independent of the state machines state. A real world user could also say "go_to" while the robot is in the normal mode and the robot should not crash because of that invalid command.
-If an invalid command comes in, this is detected and a loginfo message is created: "Invalid command 'go_to' for state NORMAL. First say 'play' and then give go_to commands!"
+The actions set_target_position, follow_ball and look_left_right are preemptable, so the state machine is able to change the states very quickly, when a corresponding event has occurred. The robot does not have to first finish one movement, before it can change its state to sleep for example.
 
-Setting a new target to the localizer_navigator node is implemented as an action. This prevents the blocking behavior of a service. The state machine is not freezed until the next target is reached. Consequently, the user can give commands any time, the state machine decides when and how to process them.
-For example: If the robot hears 'play' in the NORMAL state: Even if the robot is moving at the time of the command, it is received and the state machine waits until the current target is reached and then switches to the state PLAY. So in that state, the robot does not need to stop in order to listen for commands.
-The implementation of an action adds a lot of flexibility to the software and keeps it extendable: One could for example use action preemptions (see possible improvements)
+The movements of the ball and the movements of the robot (in normal mode) are both randomized in time and space, so the systems functionality gets stressed very well.
+
+The entire system does not have any long blocking behaviors in any node, which allows the system to stay responsive at any time.
+
+The additional castor wheel and the motorized wheels in the front of the robot drastically increase stability of the mechanical robot model, which allows much faster accelerations than with the given robot model.
 
 ## Systems limitations
-The user is moving around at a constant rate. This means, even if the pet is aproaching it, the user might move away in the meantime (not far). So in most cases the pet ends up somewhere close to the user, but not at the exact position.
+No obstacle avoidance mechanism has been implemented so far. For this reason the gazebo object does not contain collisions. The human model with the chair still does contain a collision. As a result, if the robot crashes into the person or any object of the boundaries, it might result in a dead-lock.
 
-The state PLAY has some limitations:
-The state machine only checks if its time to sleep AFTER a game (go to marker once and come back) has been finished. So sometimes the pet goes sleeping a couple of seconds after the sleeping timer has triggered.
-When playing the game and the pet goes to the user, it aims to go exactly to the users position. If the person did not move in the meantime, the pet ends up INSIDE of the user, insted in front of it.
-
-The UI is very simplistic and may have undetected weaknesses or bugs. Generally it still fullfills the purpose to visualize what is going on is a vey simple way.
+The control of the robots velocity (node "navigator") was tuned in a simple way without much effort to optimize it. In very rare situations (maybe when the robot crashed into an object), it may happen, that the control system becomes unstable and the robot drives in circles.
 
 ## Possible technical improvements
-The state PLAY could be improved:
-The state machine could check more frequently (when going to target, while coming back) if it is time to sleep. Moving actions could then be preempted and the state could be changed immediately. Navigation could also be implemented properly, so that robot stops at an intermediate position, when the "go to target" action is preempted
+A mechanism could be implemented, that detects, if a robot crashed or can not reach the target, because there is an object in the way. A very simple idea to define a timeout timer, that detects, if reaching the goal takes much too long. Then, a new target could be sent to the robot, which might be in a different direction. This could at leas keep the simulation running autonomously.
 
-The project could then be extended im multiple ways, e.g. by implementing obstacles and collisions. For this case it might be usefull tu use simulator tools, such as Stage.
+A LiDAR sensor could be integrated to the robot, so it could automatically avoid obstacles. The robot velocity control (node "navigator") could be optimized by implementing a PID controller instead of just a P controller. Much faster and more precise navigations can be expected by such a measure.
 
 <!-- LICENSE -->
 ## License
