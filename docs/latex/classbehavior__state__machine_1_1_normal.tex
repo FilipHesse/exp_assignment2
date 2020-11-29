@@ -1,0 +1,147 @@
+\hypertarget{classbehavior__state__machine_1_1_normal}{}\doxysection{behavior\+\_\+state\+\_\+machine.\+Normal Class Reference}
+\label{classbehavior__state__machine_1_1_normal}\index{behavior\_state\_machine.Normal@{behavior\_state\_machine.Normal}}
+
+
+Inheritance diagram for behavior\+\_\+state\+\_\+machine.\+Normal\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=256pt]{classbehavior__state__machine_1_1_normal__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for behavior\+\_\+state\+\_\+machine.\+Normal\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=256pt]{classbehavior__state__machine_1_1_normal__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \mbox{\hyperlink{classbehavior__state__machine_1_1_normal_a098a36b66264fd950b90684c8c36a0e9}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, set\+\_\+target\+\_\+action\+\_\+client, ball\+\_\+visible\+\_\+subscriber, sleeping\+\_\+timer)
+\item 
+def \mbox{\hyperlink{classbehavior__state__machine_1_1_normal_af5123837cc88ae8ea246234ba33e5fe5}{execute}} (self, userdata)
+\item 
+def \mbox{\hyperlink{classbehavior__state__machine_1_1_normal_a2a1e7a6450372cc22c6d7c0d5548d06a}{cancel\+\_\+goal\+\_\+and\+\_\+wait\+\_\+till\+\_\+done}} (self, rate)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classbehavior__state__machine_1_1_normal_a8ef1cf6d9e5b9796a308a20769e4ed94}\label{classbehavior__state__machine_1_1_normal_a8ef1cf6d9e5b9796a308a20769e4ed94}} 
+{\bfseries set\+\_\+target\+\_\+action\+\_\+client}
+\item 
+\mbox{\Hypertarget{classbehavior__state__machine_1_1_normal_acc0b4120cae252a110710e0a83e6e3aa}\label{classbehavior__state__machine_1_1_normal_acc0b4120cae252a110710e0a83e6e3aa}} 
+{\bfseries ball\+\_\+visible\+\_\+subscriber}
+\item 
+\mbox{\Hypertarget{classbehavior__state__machine_1_1_normal_acb37cee654f08b0a7dfd5f535863c98f}\label{classbehavior__state__machine_1_1_normal_acb37cee654f08b0a7dfd5f535863c98f}} 
+{\bfseries sleeping\+\_\+timer}
+\item 
+\mbox{\Hypertarget{classbehavior__state__machine_1_1_normal_adee64ea8b3b0f17fadb40aae071e26a6}\label{classbehavior__state__machine_1_1_normal_adee64ea8b3b0f17fadb40aae071e26a6}} 
+{\bfseries map\+\_\+range\+\_\+x}
+\item 
+\mbox{\Hypertarget{classbehavior__state__machine_1_1_normal_a606a036060b066d7fc5ed0372c07ad4a}\label{classbehavior__state__machine_1_1_normal_a606a036060b066d7fc5ed0372c07ad4a}} 
+{\bfseries map\+\_\+range\+\_\+y}
+\item 
+\mbox{\Hypertarget{classbehavior__state__machine_1_1_normal_aceab019e68a22d9019c67fcecfbaa68f}\label{classbehavior__state__machine_1_1_normal_aceab019e68a22d9019c67fcecfbaa68f}} 
+{\bfseries target\+\_\+sent}
+\item 
+\mbox{\Hypertarget{classbehavior__state__machine_1_1_normal_a2331313c3bbdad541a85ac9d8c58607e}\label{classbehavior__state__machine_1_1_normal_a2331313c3bbdad541a85ac9d8c58607e}} 
+{\bfseries rate}
+\item 
+\mbox{\Hypertarget{classbehavior__state__machine_1_1_normal_affa409751a20d04c5316daabddab0992}\label{classbehavior__state__machine_1_1_normal_affa409751a20d04c5316daabddab0992}} 
+{\bfseries iterations\+\_\+to\+\_\+sleep}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Defines the Smach-state NORMAL
+
+In this state the robot goes from one random target to another
+
+Attributes:
+    set_target_action_client (SetTargetActionClient): Action client to set a new target position
+    ball_visible_subscriber (BallVisibleSubscriber): Subscriber, subscribes to topic ball_visible
+    sleeping_timer (SleepingTimer): Allows checking if it is time to sleep
+    map_range_x ([int,int]): Range of map in x
+    map_range_y ([int,int]): Range of map in y
+\end{DoxyVerb}
+ 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classbehavior__state__machine_1_1_normal_a098a36b66264fd950b90684c8c36a0e9}\label{classbehavior__state__machine_1_1_normal_a098a36b66264fd950b90684c8c36a0e9}} 
+\index{behavior\_state\_machine.Normal@{behavior\_state\_machine.Normal}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!behavior\_state\_machine.Normal@{behavior\_state\_machine.Normal}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def behavior\+\_\+state\+\_\+machine.\+Normal.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{set\+\_\+target\+\_\+action\+\_\+client,  }\item[{}]{ball\+\_\+visible\+\_\+subscriber,  }\item[{}]{sleeping\+\_\+timer }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initializes attributes
+
+Args:
+    set_target_action_client (SetTargetActionClient): See class description
+    ball_visible_subscriber (BallVisibleSubscriber): See class description
+    sleeping_timer (SleepingTimer): See class description
+\end{DoxyVerb}
+ 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classbehavior__state__machine_1_1_normal_a2a1e7a6450372cc22c6d7c0d5548d06a}\label{classbehavior__state__machine_1_1_normal_a2a1e7a6450372cc22c6d7c0d5548d06a}} 
+\index{behavior\_state\_machine.Normal@{behavior\_state\_machine.Normal}!cancel\_goal\_and\_wait\_till\_done@{cancel\_goal\_and\_wait\_till\_done}}
+\index{cancel\_goal\_and\_wait\_till\_done@{cancel\_goal\_and\_wait\_till\_done}!behavior\_state\_machine.Normal@{behavior\_state\_machine.Normal}}
+\doxysubsubsection{\texorpdfstring{cancel\_goal\_and\_wait\_till\_done()}{cancel\_goal\_and\_wait\_till\_done()}}
+{\footnotesize\ttfamily def behavior\+\_\+state\+\_\+machine.\+Normal.\+cancel\+\_\+goal\+\_\+and\+\_\+wait\+\_\+till\+\_\+done (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{rate }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Cancels goal and waits till server has really stopped
+
+Args:
+    rate (rospy.Rate): rate for polling sleep
+\end{DoxyVerb}
+ Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classbehavior__state__machine_1_1_normal_a2a1e7a6450372cc22c6d7c0d5548d06a_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classbehavior__state__machine_1_1_normal_af5123837cc88ae8ea246234ba33e5fe5}\label{classbehavior__state__machine_1_1_normal_af5123837cc88ae8ea246234ba33e5fe5}} 
+\index{behavior\_state\_machine.Normal@{behavior\_state\_machine.Normal}!execute@{execute}}
+\index{execute@{execute}!behavior\_state\_machine.Normal@{behavior\_state\_machine.Normal}}
+\doxysubsubsection{\texorpdfstring{execute()}{execute()}}
+{\footnotesize\ttfamily def behavior\+\_\+state\+\_\+machine.\+Normal.\+execute (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{userdata }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Robot moves around between random positions
+
+Endless loop checks if it's time to sleep or if ball is seen. Then it
+sends new position targets and waits for 3 seconds after the target
+position has been reached.
+
+Args: userdata (----): unused
+
+Returns: string: outcomes "cmd_play" or "sleeping time
+\end{DoxyVerb}
+ Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classbehavior__state__machine_1_1_normal_af5123837cc88ae8ea246234ba33e5fe5_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classbehavior__state__machine_1_1_normal_af5123837cc88ae8ea246234ba33e5fe5_icgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+catkin\+\_\+ws/src/exp\+\_\+assignment2/scripts/behavior\+\_\+state\+\_\+machine.\+py\end{DoxyCompactItemize}

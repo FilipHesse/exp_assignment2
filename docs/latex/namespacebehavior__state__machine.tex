@@ -1,0 +1,61 @@
+\hypertarget{namespacebehavior__state__machine}{}\doxysection{behavior\+\_\+state\+\_\+machine Namespace Reference}
+\label{namespacebehavior__state__machine}\index{behavior\_state\_machine@{behavior\_state\_machine}}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classbehavior__state__machine_1_1_ball_visible_subscriber}{Ball\+Visible\+Subscriber}}
+\item 
+class \mbox{\hyperlink{classbehavior__state__machine_1_1_follow_ball_action_client}{Follow\+Ball\+Action\+Client}}
+\item 
+class \mbox{\hyperlink{classbehavior__state__machine_1_1_normal}{Normal}}
+\item 
+class \mbox{\hyperlink{classbehavior__state__machine_1_1_play}{Play}}
+\item 
+class \mbox{\hyperlink{classbehavior__state__machine_1_1_set_target_action_client}{Set\+Target\+Action\+Client}}
+\item 
+class \mbox{\hyperlink{classbehavior__state__machine_1_1_sleep}{Sleep}}
+\item 
+class \mbox{\hyperlink{classbehavior__state__machine_1_1_sleeping_timer}{Sleeping\+Timer}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{namespacebehavior__state__machine_a7a68346fee296ab1139d8d6a0efa84e0}\label{namespacebehavior__state__machine_a7a68346fee296ab1139d8d6a0efa84e0}} 
+{\bfseries set\+\_\+target\+\_\+action\+\_\+client} = \mbox{\hyperlink{classbehavior__state__machine_1_1_set_target_action_client}{Set\+Target\+Action\+Client}}()
+\item 
+\mbox{\Hypertarget{namespacebehavior__state__machine_ada335d3c0a7e8e858295244a7751aa1e}\label{namespacebehavior__state__machine_ada335d3c0a7e8e858295244a7751aa1e}} 
+{\bfseries follow\+\_\+ball\+\_\+action\+\_\+client} = \mbox{\hyperlink{classbehavior__state__machine_1_1_follow_ball_action_client}{Follow\+Ball\+Action\+Client}}()
+\item 
+\mbox{\Hypertarget{namespacebehavior__state__machine_ad23a194c017ca690b7be6f755a47211c}\label{namespacebehavior__state__machine_ad23a194c017ca690b7be6f755a47211c}} 
+{\bfseries sleeping\+\_\+timer} = \mbox{\hyperlink{classbehavior__state__machine_1_1_sleeping_timer}{Sleeping\+Timer}}()
+\item 
+\mbox{\Hypertarget{namespacebehavior__state__machine_a1cacfe578fb51e323ed1e2e309bc015a}\label{namespacebehavior__state__machine_a1cacfe578fb51e323ed1e2e309bc015a}} 
+{\bfseries ball\+\_\+visible\+\_\+subscriber} = \mbox{\hyperlink{classbehavior__state__machine_1_1_ball_visible_subscriber}{Ball\+Visible\+Subscriber}}()
+\item 
+\mbox{\Hypertarget{namespacebehavior__state__machine_ab8a00e9530308faa458d2dc27d6c31ef}\label{namespacebehavior__state__machine_ab8a00e9530308faa458d2dc27d6c31ef}} 
+{\bfseries sm\+\_\+top} = smach.\+State\+Machine(outcomes=\mbox{[}$\,$\mbox{]})
+\item 
+\mbox{\Hypertarget{namespacebehavior__state__machine_af9077a48e799c1b0ac45daeef60eb578}\label{namespacebehavior__state__machine_af9077a48e799c1b0ac45daeef60eb578}} 
+{\bfseries transitions}
+\item 
+\mbox{\Hypertarget{namespacebehavior__state__machine_aaba461189fef1303164f72b5820e8afc}\label{namespacebehavior__state__machine_aaba461189fef1303164f72b5820e8afc}} 
+{\bfseries sis} = smach\+\_\+ros.\+Introspection\+Server(\textquotesingle{}server\+\_\+name\textquotesingle{}, sm\+\_\+top, \textquotesingle{}/S\+M\+\_\+\+R\+O\+OT\textquotesingle{})
+\item 
+\mbox{\Hypertarget{namespacebehavior__state__machine_ac39a45c033a2718aa3acf83c0e5dccdd}\label{namespacebehavior__state__machine_ac39a45c033a2718aa3acf83c0e5dccdd}} 
+{\bfseries outcome} = sm\+\_\+top.\+execute()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Heart of exp_assignment2 package: defines robots behavior
+
+Contains a finite state machine implemented in smach. The 3 states of the
+robot pet are NORMAL, PLAY and SLEEP. The state diagram can be found in the
+README.md of the project
+
+Each interface with the ROS infrastructure, such as service clients,
+servers, action clients and publishers are implemented within separate
+classes. All these interfaces are then passed to the smach-states while they
+are constructed, in order to make the interfaces accessible for the states.
+\end{DoxyVerb}
+ 

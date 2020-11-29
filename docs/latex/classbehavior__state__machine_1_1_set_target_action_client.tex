@@ -1,0 +1,125 @@
+\hypertarget{classbehavior__state__machine_1_1_set_target_action_client}{}\doxysection{behavior\+\_\+state\+\_\+machine.\+Set\+Target\+Action\+Client Class Reference}
+\label{classbehavior__state__machine_1_1_set_target_action_client}\index{behavior\_state\_machine.SetTargetActionClient@{behavior\_state\_machine.SetTargetActionClient}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \mbox{\hyperlink{classbehavior__state__machine_1_1_set_target_action_client_a09cdf8010638a8f88b7ac5ea4952c21b}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self)
+\item 
+def \mbox{\hyperlink{classbehavior__state__machine_1_1_set_target_action_client_a2a0da9d0be4cfc4058e9a1bf3f2e7722}{call\+\_\+action}} (self, x, y)
+\item 
+def \mbox{\hyperlink{classbehavior__state__machine_1_1_set_target_action_client_a832d901da6548cb08885187339269529}{callback\+\_\+done}} (self, state, result)
+\item 
+def \mbox{\hyperlink{classbehavior__state__machine_1_1_set_target_action_client_a761acaa74596c5e260588959e96ddfd4}{cancel\+\_\+goal}} (self)
+\item 
+def \mbox{\hyperlink{classbehavior__state__machine_1_1_set_target_action_client_a34eed3cc2b1dc48975789b2a460a7a60}{is\+\_\+active}} (self)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classbehavior__state__machine_1_1_set_target_action_client_a8615d2ea2a04e664f328fde86a6fec3f}\label{classbehavior__state__machine_1_1_set_target_action_client_a8615d2ea2a04e664f328fde86a6fec3f}} 
+{\bfseries client}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Action client to set target position
+
+An action client has been chosen, because action clients are non blocking
+
+To use this class, only use the functions call_action() to set a new target
+and check the function is_active() to check if previous action was 
+finished
+
+Attributes: 
+    client (actionlib.SimpleActionClient): Clientobject to interface with 
+        actual action 
+\end{DoxyVerb}
+ 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classbehavior__state__machine_1_1_set_target_action_client_a09cdf8010638a8f88b7ac5ea4952c21b}\label{classbehavior__state__machine_1_1_set_target_action_client_a09cdf8010638a8f88b7ac5ea4952c21b}} 
+\index{behavior\_state\_machine.SetTargetActionClient@{behavior\_state\_machine.SetTargetActionClient}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!behavior\_state\_machine.SetTargetActionClient@{behavior\_state\_machine.SetTargetActionClient}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def behavior\+\_\+state\+\_\+machine.\+Set\+Target\+Action\+Client.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Creates the client and waits for action server to be available
+\end{DoxyVerb}
+ 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classbehavior__state__machine_1_1_set_target_action_client_a2a0da9d0be4cfc4058e9a1bf3f2e7722}\label{classbehavior__state__machine_1_1_set_target_action_client_a2a0da9d0be4cfc4058e9a1bf3f2e7722}} 
+\index{behavior\_state\_machine.SetTargetActionClient@{behavior\_state\_machine.SetTargetActionClient}!call\_action@{call\_action}}
+\index{call\_action@{call\_action}!behavior\_state\_machine.SetTargetActionClient@{behavior\_state\_machine.SetTargetActionClient}}
+\doxysubsubsection{\texorpdfstring{call\_action()}{call\_action()}}
+{\footnotesize\ttfamily def behavior\+\_\+state\+\_\+machine.\+Set\+Target\+Action\+Client.\+call\+\_\+action (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{x,  }\item[{}]{y }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Use this function to set a new target position of the robot_pet  
+
+Args:
+    x (int): target x-position of the robot
+    y (int): target y-position of the robot
+\end{DoxyVerb}
+ ~\newline
+ Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classbehavior__state__machine_1_1_set_target_action_client_a2a0da9d0be4cfc4058e9a1bf3f2e7722_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classbehavior__state__machine_1_1_set_target_action_client_a832d901da6548cb08885187339269529}\label{classbehavior__state__machine_1_1_set_target_action_client_a832d901da6548cb08885187339269529}} 
+\index{behavior\_state\_machine.SetTargetActionClient@{behavior\_state\_machine.SetTargetActionClient}!callback\_done@{callback\_done}}
+\index{callback\_done@{callback\_done}!behavior\_state\_machine.SetTargetActionClient@{behavior\_state\_machine.SetTargetActionClient}}
+\doxysubsubsection{\texorpdfstring{callback\_done()}{callback\_done()}}
+{\footnotesize\ttfamily def behavior\+\_\+state\+\_\+machine.\+Set\+Target\+Action\+Client.\+callback\+\_\+done (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{state,  }\item[{}]{result }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}This callback gets called when action server is done
+
+Args:
+    state (state of action): Status of the action according to
+http://docs.ros.org/en/kinetic/api/actionlib_msgs/html/msg/GoalStatus.html
+    result (SetTargetPositionResult): Result of action: Position of the point
+that was reached
+\end{DoxyVerb}
+ Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classbehavior__state__machine_1_1_set_target_action_client_a832d901da6548cb08885187339269529_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classbehavior__state__machine_1_1_set_target_action_client_a761acaa74596c5e260588959e96ddfd4}\label{classbehavior__state__machine_1_1_set_target_action_client_a761acaa74596c5e260588959e96ddfd4}} 
+\index{behavior\_state\_machine.SetTargetActionClient@{behavior\_state\_machine.SetTargetActionClient}!cancel\_goal@{cancel\_goal}}
+\index{cancel\_goal@{cancel\_goal}!behavior\_state\_machine.SetTargetActionClient@{behavior\_state\_machine.SetTargetActionClient}}
+\doxysubsubsection{\texorpdfstring{cancel\_goal()}{cancel\_goal()}}
+{\footnotesize\ttfamily def behavior\+\_\+state\+\_\+machine.\+Set\+Target\+Action\+Client.\+cancel\+\_\+goal (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Cancel current goal of action server
+\end{DoxyVerb}
+ \mbox{\Hypertarget{classbehavior__state__machine_1_1_set_target_action_client_a34eed3cc2b1dc48975789b2a460a7a60}\label{classbehavior__state__machine_1_1_set_target_action_client_a34eed3cc2b1dc48975789b2a460a7a60}} 
+\index{behavior\_state\_machine.SetTargetActionClient@{behavior\_state\_machine.SetTargetActionClient}!is\_active@{is\_active}}
+\index{is\_active@{is\_active}!behavior\_state\_machine.SetTargetActionClient@{behavior\_state\_machine.SetTargetActionClient}}
+\doxysubsubsection{\texorpdfstring{is\_active()}{is\_active()}}
+{\footnotesize\ttfamily def behavior\+\_\+state\+\_\+machine.\+Set\+Target\+Action\+Client.\+is\+\_\+active (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Is action server currently processing a goal?
+
+Returns:
+    bool: is action server currently processing a goal
+\end{DoxyVerb}
+ Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classbehavior__state__machine_1_1_set_target_action_client_a34eed3cc2b1dc48975789b2a460a7a60_icgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+catkin\+\_\+ws/src/exp\+\_\+assignment2/scripts/behavior\+\_\+state\+\_\+machine.\+py\end{DoxyCompactItemize}

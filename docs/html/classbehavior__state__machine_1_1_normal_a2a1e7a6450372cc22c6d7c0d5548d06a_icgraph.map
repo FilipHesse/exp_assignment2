@@ -1,0 +1,6 @@
+<map id="behavior_state_machine.Normal.cancel_goal_and_wait_till_done" name="behavior_state_machine.Normal.cancel_goal_and_wait_till_done">
+<area shape="rect" id="node1" title=" " alt="" coords="587,23,867,65"/>
+<area shape="rect" id="node2" href="$classbehavior__state__machine_1_1_normal.html#af5123837cc88ae8ea246234ba33e5fe5" title=" " alt="" coords="248,5,539,32"/>
+<area shape="rect" id="node4" href="$classbehavior__state__machine_1_1_play.html#a62c058c869e527f580549ba49e6bf4b8" title=" " alt="" coords="259,56,527,83"/>
+<area shape="rect" id="node3" href="$classcamera__controller_1_1_camera_controller.html#a5d6ac0543cc6a8cf40a8a1d4fd08d2f9" title=" " alt="" coords="5,23,200,65"/>
+</map>

@@ -1,0 +1,142 @@
+\hypertarget{classbehavior__state__machine_1_1_play}{}\doxysection{behavior\+\_\+state\+\_\+machine.\+Play Class Reference}
+\label{classbehavior__state__machine_1_1_play}\index{behavior\_state\_machine.Play@{behavior\_state\_machine.Play}}
+
+
+Inheritance diagram for behavior\+\_\+state\+\_\+machine.\+Play\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=241pt]{classbehavior__state__machine_1_1_play__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for behavior\+\_\+state\+\_\+machine.\+Play\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=241pt]{classbehavior__state__machine_1_1_play__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \mbox{\hyperlink{classbehavior__state__machine_1_1_play_aca545c7c7f191da2a6aa909d2cfe58f8}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, follow\+\_\+ball\+\_\+action\+\_\+client, ball\+\_\+visible\+\_\+subscriber, sleeping\+\_\+timer)
+\item 
+def \mbox{\hyperlink{classbehavior__state__machine_1_1_play_a62c058c869e527f580549ba49e6bf4b8}{execute}} (self, userdata)
+\item 
+def \mbox{\hyperlink{classbehavior__state__machine_1_1_play_a6b41f8e3996a5ee2148fe2d8dc99f982}{cancel\+\_\+goal\+\_\+and\+\_\+wait\+\_\+till\+\_\+done}} (self)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classbehavior__state__machine_1_1_play_a67ac35d2baa8cf9bc99111650bf6cde5}\label{classbehavior__state__machine_1_1_play_a67ac35d2baa8cf9bc99111650bf6cde5}} 
+{\bfseries follow\+\_\+ball\+\_\+action\+\_\+client}
+\item 
+\mbox{\Hypertarget{classbehavior__state__machine_1_1_play_af230dfbf04d02dd285f0e532e08e2003}\label{classbehavior__state__machine_1_1_play_af230dfbf04d02dd285f0e532e08e2003}} 
+{\bfseries ball\+\_\+visible\+\_\+subscriber}
+\item 
+\mbox{\Hypertarget{classbehavior__state__machine_1_1_play_a2a3ee9d1a9dff54e413ee0cff94b1926}\label{classbehavior__state__machine_1_1_play_a2a3ee9d1a9dff54e413ee0cff94b1926}} 
+{\bfseries sleeping\+\_\+timer}
+\item 
+\mbox{\Hypertarget{classbehavior__state__machine_1_1_play_a574efad3c7b9e751921c6babbfb13362}\label{classbehavior__state__machine_1_1_play_a574efad3c7b9e751921c6babbfb13362}} 
+{\bfseries rate}
+\item 
+\mbox{\Hypertarget{classbehavior__state__machine_1_1_play_a6eaa38a1fa2ad0551dfd208f3caf2a4b}\label{classbehavior__state__machine_1_1_play_a6eaa38a1fa2ad0551dfd208f3caf2a4b}} 
+{\bfseries iterations\+\_\+no\+\_\+ball}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Defines the Smach-state PLAY
+
+Robot follows ball. If it stops seeing the ball for 3 seconds, it switches
+to NORMAL state
+
+The game is repeated for a randum number of times between 1 and 3
+
+Attributes: 
+    follow_ball_action_client(SetTargetActionClient): Action client to set 
+        the command to follow the ball
+    ball_visible_subscriber(BallVisibleSubscriber): Subscriber, subscribes 
+        to the topic ball_visible
+    sleeping_timer (SleepingTimer): Allows checking if it is time to sleep 
+\end{DoxyVerb}
+ 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classbehavior__state__machine_1_1_play_aca545c7c7f191da2a6aa909d2cfe58f8}\label{classbehavior__state__machine_1_1_play_aca545c7c7f191da2a6aa909d2cfe58f8}} 
+\index{behavior\_state\_machine.Play@{behavior\_state\_machine.Play}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!behavior\_state\_machine.Play@{behavior\_state\_machine.Play}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def behavior\+\_\+state\+\_\+machine.\+Play.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{follow\+\_\+ball\+\_\+action\+\_\+client,  }\item[{}]{ball\+\_\+visible\+\_\+subscriber,  }\item[{}]{sleeping\+\_\+timer }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initializes attributes and reads ros parameters (width, height)
+
+Args:
+    set_target_action_client (SetTargetActionClient): See class description
+    sleeping_timer (SleepingTimer): See class description
+\end{DoxyVerb}
+ 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classbehavior__state__machine_1_1_play_a6b41f8e3996a5ee2148fe2d8dc99f982}\label{classbehavior__state__machine_1_1_play_a6b41f8e3996a5ee2148fe2d8dc99f982}} 
+\index{behavior\_state\_machine.Play@{behavior\_state\_machine.Play}!cancel\_goal\_and\_wait\_till\_done@{cancel\_goal\_and\_wait\_till\_done}}
+\index{cancel\_goal\_and\_wait\_till\_done@{cancel\_goal\_and\_wait\_till\_done}!behavior\_state\_machine.Play@{behavior\_state\_machine.Play}}
+\doxysubsubsection{\texorpdfstring{cancel\_goal\_and\_wait\_till\_done()}{cancel\_goal\_and\_wait\_till\_done()}}
+{\footnotesize\ttfamily def behavior\+\_\+state\+\_\+machine.\+Play.\+cancel\+\_\+goal\+\_\+and\+\_\+wait\+\_\+till\+\_\+done (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Cancels goal and waits till server has really stopped
+
+Args:
+    rate (rospy.Rate): rate for polling sleep
+\end{DoxyVerb}
+ Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classbehavior__state__machine_1_1_play_a6b41f8e3996a5ee2148fe2d8dc99f982_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classbehavior__state__machine_1_1_play_a62c058c869e527f580549ba49e6bf4b8}\label{classbehavior__state__machine_1_1_play_a62c058c869e527f580549ba49e6bf4b8}} 
+\index{behavior\_state\_machine.Play@{behavior\_state\_machine.Play}!execute@{execute}}
+\index{execute@{execute}!behavior\_state\_machine.Play@{behavior\_state\_machine.Play}}
+\doxysubsubsection{\texorpdfstring{execute()}{execute()}}
+{\footnotesize\ttfamily def behavior\+\_\+state\+\_\+machine.\+Play.\+execute (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{userdata }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Executes play mode
+
+Calls Action to follow the ball, then in a loop checks if it is time 
+to sleep or if ball was not seen for longer than 3 seconds.
+If one of the cases occurs, the action is canceled and the state is left 
+
+Args:
+    userdata (---): unused
+
+Returns:
+    string: Outcomes of this state: "can_not_see_ball_3_s" or "sleeping_time"
+\end{DoxyVerb}
+ Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classbehavior__state__machine_1_1_play_a62c058c869e527f580549ba49e6bf4b8_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classbehavior__state__machine_1_1_play_a62c058c869e527f580549ba49e6bf4b8_icgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+catkin\+\_\+ws/src/exp\+\_\+assignment2/scripts/behavior\+\_\+state\+\_\+machine.\+py\end{DoxyCompactItemize}

@@ -1,0 +1,33 @@
+\hypertarget{namespaceui}{}\doxysection{ui Namespace Reference}
+\label{namespaceui}\index{ui@{ui}}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \mbox{\hyperlink{namespaceui_a7dc58915d8fa687bb309026ec12387f7}{ball\+\_\+position\+\_\+client}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}Simulated User Interface
+
+This script creates a ROS node, which simulates a user interface to move the
+ball.
+
+The ball is moved to randompositions at random times, see class definitions for
+details
+\end{DoxyVerb}
+ 
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespaceui_a7dc58915d8fa687bb309026ec12387f7}\label{namespaceui_a7dc58915d8fa687bb309026ec12387f7}} 
+\index{ui@{ui}!ball\_position\_client@{ball\_position\_client}}
+\index{ball\_position\_client@{ball\_position\_client}!ui@{ui}}
+\doxysubsubsection{\texorpdfstring{ball\_position\_client()}{ball\_position\_client()}}
+{\footnotesize\ttfamily def ui.\+ball\+\_\+position\+\_\+client (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Action client, that sends target ball positions to the ball/position server 
+
+The positions are random, each fivth position has a negative z_value (ball should disappear)
+The time between two caommands is between 4 and 10 seconds
+\end{DoxyVerb}
+ 

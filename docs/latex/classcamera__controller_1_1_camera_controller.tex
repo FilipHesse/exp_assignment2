@@ -1,0 +1,107 @@
+\hypertarget{classcamera__controller_1_1_camera_controller}{}\doxysection{camera\+\_\+controller.\+Camera\+Controller Class Reference}
+\label{classcamera__controller_1_1_camera_controller}\index{camera\_controller.CameraController@{camera\_controller.CameraController}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \mbox{\hyperlink{classcamera__controller_1_1_camera_controller_a5d6ac0543cc6a8cf40a8a1d4fd08d2f9}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self)
+\item 
+def \mbox{\hyperlink{classcamera__controller_1_1_camera_controller_a4094df9c6958946419068fd85cae9247}{publish\+\_\+continuously\+\_\+zero}} (self)
+\item 
+def \mbox{\hyperlink{classcamera__controller_1_1_camera_controller_afecb696a89c4c5961830be0e03083685}{execute}} (self, goal)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classcamera__controller_1_1_camera_controller_a77c183fe5c8bfdb390fa97b9149e09d3}\label{classcamera__controller_1_1_camera_controller_a77c183fe5c8bfdb390fa97b9149e09d3}} 
+{\bfseries server}
+\item 
+\mbox{\Hypertarget{classcamera__controller_1_1_camera_controller_a907a781f9a756054e5491b0cd708bb72}\label{classcamera__controller_1_1_camera_controller_a907a781f9a756054e5491b0cd708bb72}} 
+{\bfseries pub}
+\item 
+\mbox{\Hypertarget{classcamera__controller_1_1_camera_controller_a55901d17678e961ab2efcf951012a8d2}\label{classcamera__controller_1_1_camera_controller_a55901d17678e961ab2efcf951012a8d2}} 
+{\bfseries action\+\_\+active}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyVerb}This ROS continuously controlls the camera link
+
+The camera controller continuously publishes the angle 
+zero to the camera_position_controller, which is hadled by
+the controller manager.
+If the action look_left_right is called, the callback
+makes the robot look to the left (45°), then wait 2
+seconds, then look to the right (45°), wait again for
+two seconds, look to the center
+The action is preemptable after the waiting time of 2 
+seconds in the middle
+
+    Attributes: 
+        server (actionlib.SimpleActionServer): Action server
+            for the action look_left_right
+        pub (rospy.Publisher): Publisher for angle command
+            of the camera_position_controller (controller
+            manager)
+\end{DoxyVerb}
+ 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classcamera__controller_1_1_camera_controller_a5d6ac0543cc6a8cf40a8a1d4fd08d2f9}\label{classcamera__controller_1_1_camera_controller_a5d6ac0543cc6a8cf40a8a1d4fd08d2f9}} 
+\index{camera\_controller.CameraController@{camera\_controller.CameraController}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!camera\_controller.CameraController@{camera\_controller.CameraController}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def camera\+\_\+controller.\+Camera\+Controller.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Initializes attributes and calls function to publish zero
+\end{DoxyVerb}
+ Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcamera__controller_1_1_camera_controller_a5d6ac0543cc6a8cf40a8a1d4fd08d2f9_cgraph}
+\end{center}
+\end{figure}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classcamera__controller_1_1_camera_controller_afecb696a89c4c5961830be0e03083685}\label{classcamera__controller_1_1_camera_controller_afecb696a89c4c5961830be0e03083685}} 
+\index{camera\_controller.CameraController@{camera\_controller.CameraController}!execute@{execute}}
+\index{execute@{execute}!camera\_controller.CameraController@{camera\_controller.CameraController}}
+\doxysubsubsection{\texorpdfstring{execute()}{execute()}}
+{\footnotesize\ttfamily def camera\+\_\+controller.\+Camera\+Controller.\+execute (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{goal }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Callback for Action server look_left_right
+
+Looks to the left, waits 2 seconds, looks 
+to the right, waits 2 seconds, looks to the center
+\end{DoxyVerb}
+ Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcamera__controller_1_1_camera_controller_afecb696a89c4c5961830be0e03083685_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classcamera__controller_1_1_camera_controller_a4094df9c6958946419068fd85cae9247}\label{classcamera__controller_1_1_camera_controller_a4094df9c6958946419068fd85cae9247}} 
+\index{camera\_controller.CameraController@{camera\_controller.CameraController}!publish\_continuously\_zero@{publish\_continuously\_zero}}
+\index{publish\_continuously\_zero@{publish\_continuously\_zero}!camera\_controller.CameraController@{camera\_controller.CameraController}}
+\doxysubsubsection{\texorpdfstring{publish\_continuously\_zero()}{publish\_continuously\_zero()}}
+{\footnotesize\ttfamily def camera\+\_\+controller.\+Camera\+Controller.\+publish\+\_\+continuously\+\_\+zero (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Publishes zero in a loop, so the controller always has a target value
+\end{DoxyVerb}
+ Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classcamera__controller_1_1_camera_controller_a4094df9c6958946419068fd85cae9247_icgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+catkin\+\_\+ws/src/exp\+\_\+assignment2/scripts/camera\+\_\+controller.\+py\end{DoxyCompactItemize}
